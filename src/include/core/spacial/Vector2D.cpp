@@ -1,67 +1,43 @@
 #include "Vector2D.h"
 
-Vector2D::Vector2D()
-{
-  x = y = length = 0; 
+float Magnitude(Vector2D self){
+  return sqrt(self.x * self.x + self.y * self.y);
 }
-Vector2D::Vector2D(float inX, float inY)
-{
-  this->x = inX;
-  this->y = inY;
-  length = Magnitude();
+float DotProduct(Vector2D self, Vector2D other){
+  return self.x * other.x + self.y * other.y;
 }
 
-float Vector2D::Magnitude(){
-  return length = sqrt(x * x + y * y);
-}
-float Vector2D::DotProduct(Vector2D other){
-  return x * other.x + y * other.y;
-}
-Vector2D Vector2D::Zero()
+Vector2D operator+(const Vector2D &self, const Vector2D &other)
 {
-  return Vector2D(0, 0);
+  return {self.x + other.x, self.y + other.y};
 }
-Vector2D Vector2D::Up()
+Vector2D operator-(Vector2D &self, const Vector2D &other)
 {
-  return Vector2D(0, 1);
-}
-Vector2D Vector2D::Down()
-{
-  return Vector2D(0,-1);
+
+  return {self.x - other.x, self.y - other.y};
 }
 
-Vector2D Vector2D::One(){
-  return Vector2D(1,1);
-}
-Vector2D Vector2D::operator+(Vector2D other){
-  return Vector2D(x + other.x, y + other.y);
-}
-Vector2D Vector2D::operator-(Vector2D other){
+Vector2D operator*(Vector2D &self, float scalar){
 
-  return Vector2D(x - other.x, y - other.y);
+  return {self.x * scalar, self.y * scalar};
 }
-
-Vector2D Vector2D::operator*(float scalar){
-
-  return Vector2D(x * scalar, y * scalar);
-}
-Vector2D Vector2D::operator/(float scalar)
+Vector2D operator/(Vector2D &self, const float scalar)
 {
-  return Vector2D(x / scalar, y / scalar);
+  return {self.x / scalar, self.y / scalar};
 }
 
-void Vector2D::operator+=(Vector2D other)
+void operator+=(Vector2D &self,const Vector2D &other)
 {
-  *this = *this + other;
+  self = self + other;
 }
 
 
-bool Vector2D::operator==(Vector2D other)
+bool operator==(Vector2D self, Vector2D other)
 {
-  return (this->x && other.x) && (this->y && other.y);
+  return (self.x && other.x) && (self.y && other.y);
 }
 
-bool Vector2D::operator!=(Vector2D other)
+bool operator!=(Vector2D self, Vector2D other)
 {
-  return !(this->x && other.x) && (this->y && other.y);
+  return !(self.x && other.x) && (self.y && other.y);
 }

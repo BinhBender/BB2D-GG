@@ -3,16 +3,19 @@
 
 #pragma once
 
-#define Default_Gravity 9.81f
+#define Default_Gravity Vector2D{0, 0}
 #define Default_Mass 1
 
 class Object{
   
 public:
   Transform transform;
-  float gravity;
+  Vector2D gravity;
   float mass;
   Vector2D force;
+
+  float friction;
+  float bounce;
 
   void* Mesh;
 
@@ -23,3 +26,5 @@ public:
   void Rotate(float);
 
 };
+
+typedef Object* H_Object;

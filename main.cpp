@@ -18,7 +18,7 @@
 int main(int argc, char *argv[])
 {
 
-  Vector2D position = Vector2D(10, 100);
+  Vector2D position = Vector2D{10, 100};
 
   SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -77,7 +77,6 @@ int main(int argc, char *argv[])
     }
 
     SDL_RenderClear(renderer);
-
     SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), indicies.data(), indicies.size());
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
 
