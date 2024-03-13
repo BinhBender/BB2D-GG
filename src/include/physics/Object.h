@@ -1,5 +1,6 @@
 #include "./core/spacial/Vector2D.h"
 #include "./core/spacial/Transform.h"
+#include "./core/picture/mesh.h"
 
 #pragma once
 
