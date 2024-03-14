@@ -27,3 +27,16 @@ void Object::Rotate(float Radians)
 {
   transform.Rotate(Radians);
 }
+
+Sphere::Sphere() : Object()
+{
+  Radius = 1;
+}
+
+Sphere::~Sphere()
+{
+}
+
+void Sphere::detect_collision()
+{
+}

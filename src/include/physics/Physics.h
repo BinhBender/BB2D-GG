@@ -15,16 +15,18 @@
 
 #define DEFAULT_GRID_SIZE 10
 
-//Physics need physical objects
+// Physics need physical objects
+// Each grid will have array of pointers to objects as well as a count for the number of items in the grid
+struct Grid
+{
+  H_Object *objects;
+  int size = 0;
+  int lastIndex = 0;
+};
 
 class Physics{
 private:
-  //Each grid will have array of pointers to objects as well as a count for the number of items in the grid
-  struct Grid{
-    H_Object* objects;
-    int size = 0;
-    int lastIndex = 0;
-  };
+
 
   //Dividing the scene into grids for computational efficiency
   Grid bodies[GRID_X][GRID_Y] = {nullptr};
