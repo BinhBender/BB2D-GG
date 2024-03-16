@@ -37,6 +37,7 @@ Sphere::~Sphere()
 {
 }
 
-void Sphere::detect_collision()
+void Sphere::detect_collision(Grid* other_bodies)
 {
+
 }

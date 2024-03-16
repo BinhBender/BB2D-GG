@@ -2,11 +2,13 @@
 
 Physics::Physics()
 {
+  int sizex = GRID_X;
+  int sizey = GRID_Y;
   for (int i = 0; i < GRID_X; i++)
   {
     for (int j = 0; j < GRID_Y; j++)
     {
-      bodies[i][j] = { new H_Object[DEFAULT_GRID_SIZE], DEFAULT_GRID_SIZE };
+      bodies[i][j] = { new H_Object[DEFAULT_GRID_SIZE], DEFAULT_GRID_SIZE, NULL };
     }
   }
 }
@@ -16,9 +18,9 @@ Physics::~Physics()
   //deallocates the objects in the grid
   int grid_size = 0;
   H_Object *grid_objects = nullptr;
-  for (int i = 0; i < GRID_X; i++)
-  {
-    for (int j = 0; j < GRID_Y; j++)
+  for (int i = 0; i < GRID_Y; i++)
+    {
+      for (int j = 0; j < GRID_X; j++)
     {
       grid_size = bodies[i][j].size;
       grid_objects = bodies[i][j].objects;
@@ -59,25 +61,43 @@ H_Object *Physics::resize_grid(Grid *grid, int size)
   return grid->objects;
 }
 
+void Physics::Get_Surrounding_Grid(int x, int y){
+  // Collect
+  Vector2D startGrid = {Clamp(0, GRID_X, x - 1), Clamp(0, GRID_Y, y - 1)};
+  Vector2D endGrid = {Clamp(0, GRID_X, x + 1), Clamp(0, GRID_Y, y + 1)};
+
+  // Get the grids that is surrounding the objects
+
+  memset(sub_bodies, 0, sizeof(Grid *) * 9);
+  int grid_counter = 0;
+  for (int Grid_y = startGrid.y; Grid_y < endGrid.y; Grid_y++)
+  {
+    for (int Grid_x = startGrid.x; Grid_x < endGrid.x; Grid_x++)
+    {
+      sub_bodies[grid_counter] = &bodies[Grid_y][Grid_x];
+    }
+  }
+}
 void Physics::Update_Objects()
 {
-  for(int i = 0; i < GRID_X; i++){
-    for(int j = 0; j < GRID_Y; j++){
-      //When updating there are 3 steps
-      //Move the objects
-      for (int k = 0; k < bodies[i][j].size; k++){
-        bodies[i][j].objects[k]->Move();
+  for(int i = 0; i < GRID_Y; i++){
+    for(int j = 0; j < GRID_X; j++){
+      Get_Surrounding_Grid(j, i); // After this runs, "sub_bodies" updates
+      for (int k = 0; k < bodies[i][j].size; k++)
+      {
 
-        // Detect Collision
-        /*How do we do this for different shapes?
-          Square is different from sphere/rectangle/trapizoid
-          What happens when it moves into multiple objects at once?
-        */
+        // When updating there are 3 steps
+        
+        //  Detect Collision
+          /*How do we do this for different shapes?
+            Square is different from sphere/rectangle/trapizoid
+            What happens when it moves into multiple objects at once?
+          */
+
+        // Then move to the appropriate spot
 
         // Fix the objects
       }
-
-
     }
   }
 }
@@ -110,6 +130,7 @@ void Physics::RemoveObject(int x_coord, int y_coord, H_Object obj)
       //Remove obj from list
       grid->objects[i] = nullptr;
       //Shift all objects back
+        //Apparently memcpy/memset is faster due to asm optimization 
       memcpy(grid->objects + i, grid->objects + i + 1, sizeof(H_Object) * (grid_size - i - 1));
       //
       memset(grid->objects + grid_size-i-1, 0, sizeof(H_Object));

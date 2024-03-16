@@ -1,14 +1,16 @@
+#pragma once 
+
 #include "./core/spacial/Vector2D.h"
 #include "./core/spacial/Transform.h"
 #include "./core/picture/mesh.h"
 #include "./SDL2/SDL_rect.h"
 #include "Physics.h"
 
-#pragma once
 
 #define Default_Gravity Vector2D{0, 0}
 #define Default_Mass 1
 
+class Physics;
 class Object{
   
 public:
@@ -31,6 +33,7 @@ public:
 
   void virtual detect_collision(Grid*) = 0;
 };
+typedef Object* H_Object;
 
 /// @brief Spherical object using the radius
 class Sphere : public Object{
@@ -50,9 +53,7 @@ public:
 
   Rectangle();
   ~Rectangle();
-  void detect_collision(Grid*);
+  void detect_collision(H_Object*);
 };
 
 
-
-typedef Object* H_Object;
