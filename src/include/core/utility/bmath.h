@@ -2,7 +2,14 @@
   This includes a bunch of functions that are mathmatical operations that the cmath library does not have.
 */
 #pragma once
+#include <math.h>
+#include "./spacial/Vector2D.h"
+
 #define PI 3.14159f
+
+//These definitions exist in case I'm ever too lazy 
+#define RAD(x) x * PI / 180.0f
+#define DEG(x) x * 180.0f / PI
 
 
 /// @brief Converts a degree value into a radian
@@ -28,3 +35,5 @@ inline constexpr int Clamp(int, int, int);
 /// @param  source Input number to clamp
 /// @return The resulting clampage
 inline constexpr int Clamp(float, float, float);
+
+inline constexpr float distance(Vector2D, Vector2D);

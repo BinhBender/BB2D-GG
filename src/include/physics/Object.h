@@ -5,7 +5,7 @@
 #include "./core/picture/mesh.h"
 #include "./SDL2/SDL_rect.h"
 #include "Physics.h"
-
+#include "./utility/bmath.h"
 
 #define Default_Gravity Vector2D{0, 0}
 #define Default_Mass 1
@@ -22,38 +22,79 @@ public:
   float friction;
   float bounce;
 
-  Mesh* Mesh;
 
   Object();
+  Object(Transform);
+  
   ~Object();
 
   void Move();
   void Scale(Vector2D);
   void Rotate(float);
 
-  void virtual detect_collision(Grid*) = 0;
+  virtual H_Object detect_collision(const Grid **) = 0;
 };
 typedef Object* H_Object;
 
 /// @brief Spherical object using the radius
-class Sphere : public Object{
+class Sphere{
+public:
+  Transform transform;
+  Vector2D gravity;
+  float mass;
+  Vector2D force;
+
+  float friction;
+  float bounce;
+
   float Radius;
 
   Sphere();
   Sphere(float);
   ~Sphere();
-  void detect_collision(Grid*);
+  void Move();
+  void Scale(Vector2D);
+  void Rotate(float);
+
+  H_Object detect_collision(const Grid **);
 };
 
-class Rectangle : public Object{
+class Rectangle{
 public:
+  Transform transform;
+  Vector2D gravity;
+  float mass;
+  Vector2D force;
+
+  float friction;
+  float bounce;
+
   Vector2D width_height;
-
-
+  void Move();
+  void Scale(Vector2D);
+  void Rotate(float);
 
   Rectangle();
   ~Rectangle();
-  void detect_collision(H_Object*);
+  H_Object detect_collision(const Grid **); 
 };
 
+typedef Sphere* H_Sphere;
 
+class Mesh : public Object{
+  Transform transform;
+  Vector2D gravity;
+  float mass;
+  Vector2D force;
+
+  float friction;
+  float bounce;
+
+  Mesh *Mesh;
+
+  
+  void Move();
+  void Scale(Vector2D);
+  void Rotate(float);
+  H_Object detect_collision(const Grid **);
+};

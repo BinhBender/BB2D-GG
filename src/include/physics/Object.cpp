@@ -28,16 +28,43 @@ void Object::Rotate(float Radians)
   transform.Rotate(Radians);
 }
 
-Sphere::Sphere() : Object()
+Sphere::Sphere()
 {
+  gravity = Default_Gravity;
+  mass = Default_Mass;
+
+  force = Vector2_Zero;
+
   Radius = 1;
+}
+
+Sphere::Sphere(float rad)
+{
+  Radius = rad;
 }
 
 Sphere::~Sphere()
 {
+
 }
 
-void Sphere::detect_collision(Grid* other_bodies)
-{
 
+/// @brief 
+/// @param other_bodies 
+/// @return The single collision of
+H_Sphere Sphere::detect_collision(const Grid **other_bodies)
+{
+  for(int i = 0; i < MAX_GRID_GROUP_AMOUNT; i++){
+    if(other_bodies[i] != nullptr){
+      int size = other_bodies[i]->lastIndex;
+      float closest_distance = 0;
+      for(int j = 0; j < size; j++){
+
+
+
+
+
+      }
+    }
+  }
 }

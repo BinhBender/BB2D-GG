@@ -8,7 +8,7 @@ Physics::Physics()
   {
     for (int j = 0; j < GRID_Y; j++)
     {
-      bodies[i][j] = { new H_Object[DEFAULT_GRID_SIZE], DEFAULT_GRID_SIZE, NULL };
+      bodies[i][j] = { new H_OBJ_TYPE[DEFAULT_GRID_CONTAINER_SIZE], DEFAULT_GRID_CONTAINER_SIZE, NULL };
     }
   }
 }
@@ -17,7 +17,7 @@ Physics::~Physics()
 {
   //deallocates the objects in the grid
   int grid_size = 0;
-  H_Object *grid_objects = nullptr;
+  H_OBJ_TYPE *grid_objects = nullptr;
   for (int i = 0; i < GRID_Y; i++)
     {
       for (int j = 0; j < GRID_X; j++)
@@ -39,16 +39,16 @@ Physics::~Physics()
 /// @brief Takes in a pointer to a specific grid in "bodies" and creates a new array of a specified size, returning early if it is less than the size of the original grid
 /// @param grid Pointer to a grid in bodies in the Physics class
 /// @param size The desired reallocated size
-H_Object *Physics::resize_grid(Grid *grid, int size)
+H_OBJ_TYPE *Physics::resize_grid(Grid *grid, int size)
 {
   //Check if the specified size is less than the current size
   if(size < grid->size) return;
   
   //Allocate a new array for objects
-  H_Object *new_grid_object_container = new H_Object[size];
+  H_OBJ_TYPE *new_grid_object_container = new H_OBJ_TYPE[size];
 
   //Copy the data from the old array to the new one
-  memcpy(new_grid_object_container, grid->objects, sizeof(H_Object) * grid->size);
+  memcpy(new_grid_object_container, grid->objects, sizeof(H_OBJ_TYPE) * grid->size);
 
   //Change the size
   grid->size = size;
@@ -78,14 +78,14 @@ void Physics::Get_Surrounding_Grid(int x, int y){
     }
   }
 }
-void Physics::Update_Objects()
+void Physics::Update_Object()
 {
   for(int i = 0; i < GRID_Y; i++){
     for(int j = 0; j < GRID_X; j++){
       Get_Surrounding_Grid(j, i); // After this runs, "sub_bodies" updates
       for (int k = 0; k < bodies[i][j].size; k++)
       {
-
+        H_OBJ_TYPE collided = bodies[i][j].objects[k]->detect_collision(sub_bodies);
         // When updating there are 3 steps
         
         //  Detect Collision
@@ -98,16 +98,18 @@ void Physics::Update_Objects()
 
         // Fix the objects
       }
+
+      
     }
   }
 }
 
-void Physics::Resolve_Collision(Object *objectA, Object *objectB)
+void Physics::Resolve_Collision(OBJ_TYPE *objectA, OBJ_TYPE *objectB)
 { 
 
 }
 
-void Physics::AddObject(int x_coord, int y_coord, H_Object obj)
+void Physics::AddObject(int x_coord, int y_coord, H_OBJ_TYPE obj)
 {
   Grid *grid = &bodies[x_coord][y_coord];
   if (grid->lastIndex > grid->size - 1)
@@ -120,7 +122,7 @@ void Physics::AddObject(int x_coord, int y_coord, H_Object obj)
   grid->lastIndex++;
 }
 
-void Physics::RemoveObject(int x_coord, int y_coord, H_Object obj)
+void Physics::RemoveObject(int x_coord, int y_coord, H_OBJ_TYPE obj)
 {
   Grid *grid = &bodies[x_coord][y_coord];
   int grid_size = grid->size;
@@ -131,9 +133,9 @@ void Physics::RemoveObject(int x_coord, int y_coord, H_Object obj)
       grid->objects[i] = nullptr;
       //Shift all objects back
         //Apparently memcpy/memset is faster due to asm optimization 
-      memcpy(grid->objects + i, grid->objects + i + 1, sizeof(H_Object) * (grid_size - i - 1));
+      memcpy(grid->objects + i, grid->objects + i + 1, sizeof(H_OBJ_TYPE) * (grid_size - i - 1));
       //
-      memset(grid->objects + grid_size-i-1, 0, sizeof(H_Object));
+      memset(grid->objects + grid_size-i-1, 0, sizeof(H_OBJ_TYPE));
     }
   }
 }

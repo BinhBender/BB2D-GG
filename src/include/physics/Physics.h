@@ -16,21 +16,40 @@
 #define GRID_X 16
 #define GRID_Y 9
 
-#define DEFAULT_GRID_SIZE 10
+#define DEFAULT_GRID_CONTAINER_SIZE 10
 
-#ifdef BOUNDED
-  #define Bounds
+#define MAX_GRID_GROUP_AMOUNT 9
+/*
+ | | | | | | |
+ | |O|O|O| | |
+ | |O|O|O| | |
+ | |O|O|O| | |
+ | | | | | | |
+*/
+#define _SPHERE
+#ifdef _MESH
+  #define OBJ_TYPE Mesh
+  #define H_OBJ_TYPE H_Mesh
 
 #endif
+#ifdef _RECTANGLE
 
-// Physics need physical objects
-// Each grid will have array of pointers to objects as well as a count for the number of items in the grid
+  #define OBJ_TYPE Rectangle
+  #define H_OBJ_TYPE H_Rectangle
+#endif
+#ifdef _SPHERE
+  #define OBJ_TYPE Sphere
+  #define H_OBJ_TYPE H_Sphere
+#endif
+// Physics need physical OBJ_TYPE
+// Each grid will have array of pointers to OBJ_TYPE as well as a count for the number of items in the grid
 struct Grid
 {
-  H_Object *objects;  // Array of the objects
+  H_OBJ_TYPE *objects;  // Array of the OBJ_TYPE
   int size = 0;       // Max size of the array, Default: 10, doubles everytime it reaches max.
-  int lastIndex = 0;  // Keeps track of the index of the last object added.
+  int lastIndex = 0;  // Keeps track of the index of the last OBJ_TYPE added.fbfg
 };
+typedef Grid* H_Grid;
 
 class Physics{
 private:
@@ -50,7 +69,7 @@ private:
     int size[2];
   };
 
-  H_Object* resize_grid(Grid*, int);
+  H_OBJ_TYPE* resize_grid(Grid*, int);
   void Get_Surrounding_Grid(int, int);
 
 public:
@@ -58,10 +77,10 @@ public:
 
   Physics();
   ~Physics();
-  void Update_Objects();
-  void Resolve_Collision(Object*, Object*);
+  void Update_Object();
+  void Resolve_Collision(OBJ_TYPE*, OBJ_TYPE*);
 
-  void AddObject(int, int, H_Object);
-  void RemoveObject(int, int, H_Object);
+  void AddObject(int, int, H_OBJ_TYPE);
+  void RemoveObject(int, int, H_OBJ_TYPE);
 };
 
