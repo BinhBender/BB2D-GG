@@ -5,7 +5,7 @@
 #include "Object.h"
 #include "string.h"
 #include "./utility/bmath.h"
-
+#include <iostream>
 
 /*
   needs 
@@ -56,7 +56,7 @@ private:
 
 
   //Dividing the scene into grids for computational efficiency
-  Grid bodies[GRID_Y][GRID_X] = {nullptr};
+  Grid bodies[GRID_Y][GRID_X] = {0};
 
 
   Grid* sub_bodies[9] = {nullptr};
@@ -82,5 +82,8 @@ public:
 
   void AddObject(int, int, H_OBJ_TYPE);
   void RemoveObject(int, int, H_OBJ_TYPE);
+
+  void PrintGrid(int, int);
+  void PrintGridAll();
 };
 

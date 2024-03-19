@@ -2,11 +2,11 @@
 
 Physics::Physics()
 {
-  int sizex = GRID_X;
   int sizey = GRID_Y;
-  for (int i = 0; i < GRID_X; i++)
+  int sizex = GRID_X;
+  for (int i = 0; i < GRID_Y; i++)
   {
-    for (int j = 0; j < GRID_Y; j++)
+    for (int j = 0; j < GRID_X; j++)
     {
       bodies[i][j] = { new H_OBJ_TYPE[DEFAULT_GRID_CONTAINER_SIZE], DEFAULT_GRID_CONTAINER_SIZE, NULL };
     }
@@ -109,9 +109,13 @@ void Physics::Resolve_Collision(OBJ_TYPE *objectA, OBJ_TYPE *objectB)
 
 }
 
+/// @brief 
+/// @param x_coord 
+/// @param y_coord 
+/// @param obj 
 void Physics::AddObject(int x_coord, int y_coord, H_OBJ_TYPE obj)
 {
-  Grid *grid = &bodies[x_coord][y_coord];
+  Grid *grid = &bodies[y_coord][x_coord];
   if (grid->lastIndex > grid->size - 1)
   {
     resize_grid(grid, grid->size * 2);
@@ -122,9 +126,13 @@ void Physics::AddObject(int x_coord, int y_coord, H_OBJ_TYPE obj)
   grid->lastIndex++;
 }
 
+/// @brief 
+/// @param x_coord 
+/// @param y_coord 
+/// @param obj 
 void Physics::RemoveObject(int x_coord, int y_coord, H_OBJ_TYPE obj)
 {
-  Grid *grid = &bodies[x_coord][y_coord];
+  Grid *grid = &bodies[y_coord][x_coord];
   int grid_size = grid->size;
   for (int i = 0; i < grid_size; i++)
   {
@@ -134,8 +142,32 @@ void Physics::RemoveObject(int x_coord, int y_coord, H_OBJ_TYPE obj)
       //Shift all objects back
         //Apparently memcpy/memset is faster due to asm optimization 
       memcpy(grid->objects + i, grid->objects + i + 1, sizeof(H_OBJ_TYPE) * (grid_size - i - 1));
-      //
       memset(grid->objects + grid_size-i-1, 0, sizeof(H_OBJ_TYPE));
+    }
+  }
+}
+
+/// @brief Prints the address of the specified grid from "bodies" with the index, size, and objects.
+/// @param x The x coordinate grid address
+/// @param y The y coordinate grid address
+void Physics::PrintGrid(int x , int y)
+{
+  std::cout << "Address: " << &bodies[y][x] << " Last index: " << bodies[y][x].lastIndex << ", size: " << bodies[y][x].size << '\n';
+  for (size_t i = 0; i < bodies[y][x].lastIndex; i++)
+  {
+    /* code */
+    std::cout << "     " << bodies[y][x].objects[i] << "\n";
+  }
+  
+}
+
+void Physics::PrintGridAll()
+{
+  for (int i = 0; i < MAX_GRID_GROUP_AMOUNT; i++)
+  {
+    for (size_t j = 0; j < MAX_GRID_GROUP_AMOUNT; j++)
+    {
+      PrintGrid(i,j);
     }
   }
 }
