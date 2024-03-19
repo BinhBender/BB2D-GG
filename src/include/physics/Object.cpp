@@ -54,17 +54,25 @@ Sphere::~Sphere()
 /// @return The single collision of
 H_Sphere Sphere::detect_collision(const Grid **other_bodies)
 {
+  float closest_distance = __builtin_inff();
+  H_Sphere collided = nullptr;
   for(int i = 0; i < MAX_GRID_GROUP_AMOUNT; i++){
     if(other_bodies[i] != nullptr){
       int size = other_bodies[i]->lastIndex;
-      float closest_distance = 0;
+
       for(int j = 0; j < size; j++){
+        float dist = Distance(transform.Position, other_bodies[i]->objects[j]->transform.Position);
 
-
-
-
+        if (closest_distance > dist){
+          closest_distance = dist;
+          collided = other_bodies[i]->objects[j];
+        }
 
       }
+
+
     }
   }
+
+  return collided;
 }

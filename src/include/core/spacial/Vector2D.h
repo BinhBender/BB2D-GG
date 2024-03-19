@@ -5,8 +5,8 @@ typedef SDL_FPoint Vector2D;
 
 float Magnitude(Vector2D);
 float DotProduct(Vector2D);
-
-static Vector2D Vector2_Zero = Vector2D{0,  0};
+float Distance(Vector2D, Vector2D);
+static Vector2D Vector2_Zero = Vector2D{0, 0};
 static Vector2D Vector2_Up   = Vector2D{0,  1};
 static Vector2D Vector2_Down = Vector2D{0, -1};
 static Vector2D Vector2_One  = Vector2D{1,  1};

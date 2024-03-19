@@ -22,7 +22,6 @@ public:
   float friction;
   float bounce;
 
-
   Object();
   Object(Transform);
   
@@ -35,6 +34,11 @@ public:
   virtual H_Object detect_collision(const Grid **) = 0;
 };
 typedef Object* H_Object;
+
+
+///////////////////////////////
+///////////////////////////////
+
 
 /// @brief Spherical object using the radius
 class Sphere{
@@ -56,8 +60,14 @@ public:
   void Scale(Vector2D);
   void Rotate(float);
 
-  H_Object detect_collision(const Grid **);
+  Sphere* detect_collision(const Grid **);
 };
+typedef Sphere *H_Sphere;
+
+
+///////////////////////////////
+///////////////////////////////
+
 
 class Rectangle{
 public:
@@ -76,12 +86,14 @@ public:
 
   Rectangle();
   ~Rectangle();
-  H_Object detect_collision(const Grid **); 
+  Rectangle* detect_collision(const Grid **);
 };
+typedef Rectangle* Rectangle;
 
-typedef Sphere* H_Sphere;
+///////////////////////////////
+///////////////////////////////
 
-class Mesh : public Object{
+class Mesh{
   Transform transform;
   Vector2D gravity;
   float mass;
@@ -92,9 +104,10 @@ class Mesh : public Object{
 
   Mesh *Mesh;
 
-  
+
   void Move();
   void Scale(Vector2D);
   void Rotate(float);
   H_Object detect_collision(const Grid **);
 };
+typedef Mesh* Mesh;

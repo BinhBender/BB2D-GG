@@ -7,6 +7,11 @@ float DotProduct(Vector2D self, Vector2D other){
   return self.x * other.x + self.y * other.y;
 }
 
+float Distance(Vector2D self, Vector2D other){
+  return sqrt((self.x - other.x) * (self.x - other.x) + (self.y - other.y) * (self.y - other.y));
+
+}
+
 Vector2D operator+(const Vector2D &self, const Vector2D &other)
 {
   return {self.x + other.x, self.y + other.y};
@@ -41,3 +46,4 @@ bool operator!=(Vector2D self, Vector2D other)
 {
   return !(self.x && other.x) && (self.y && other.y);
 }
+
