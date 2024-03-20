@@ -1,47 +1,39 @@
 #pragma once 
 
-#include "./core/spacial/Vector2D.h"
-#include "./core/spacial/Transform.h"
-#include "./core/picture/mesh.h"
+#include "bmath.h"
+#include "Vector2D.h"
+#include "Transform.h"
+#include "mesh.h"
 #include "./SDL2/SDL_rect.h"
-#include "Physics.h"
-#include "./utility/bmath.h"
 
-#define Default_Gravity Vector2D{0, 0}
+#define Default_Gravity Vector2D{0, -9.81}
 #define Default_Mass 1
 
-class Physics;
-class Object{
-  
-public:
-  Transform transform;
-  Vector2D gravity;
-  float mass;
-  Vector2D force;
+#define _SPHERE
+#ifdef _MESH
+#define OBJ_TYPE Mesh
+#define H_OBJ_TYPE H_Mesh
 
-  float friction;
-  float bounce;
+#endif
+#ifdef _RECTANGLE
 
-  Object();
-  Object(Transform);
-  
-  ~Object();
+#define OBJ_TYPE Rectangle
+#define H_OBJ_TYPE H_Rectangle
+#endif
+#ifdef _SPHERE
+  #define OBJ_TYPE Sphere
+  #define H_OBJ_TYPE H_Sphere
+#endif
 
-  void Move();
-  void Scale(Vector2D);
-  void Rotate(float);
-
-  virtual H_Object detect_collision(const Grid **) = 0;
+enum object_type{
+  sphere,
+  mesh,
+  rectangle
 };
-typedef Object* H_Object;
-
-
-///////////////////////////////
-///////////////////////////////
-
 
 /// @brief Spherical object using the radius
-class Sphere{
+class Sphere
+{
 public:
   Transform transform;
   Vector2D gravity;
@@ -53,6 +45,8 @@ public:
 
   float Radius;
 
+  object_type type = sphere;
+
   Sphere();
   Sphere(float);
   ~Sphere();
@@ -60,9 +54,8 @@ public:
   void Scale(Vector2D);
   void Rotate(float);
 
-  Sphere* detect_collision(const Grid **);
 };
-typedef Sphere *H_Sphere;
+typedef Sphere* H_Sphere;
 
 
 ///////////////////////////////
@@ -79,6 +72,8 @@ public:
   float friction;
   float bounce;
 
+  object_type type = rectangle;
+
   Vector2D width_height;
   void Move();
   void Scale(Vector2D);
@@ -86,14 +81,13 @@ public:
 
   Rectangle();
   ~Rectangle();
-  Rectangle* detect_collision(const Grid **);
 };
-typedef Rectangle* Rectangle;
+typedef Rectangle* H_Rectangle;
 
 ///////////////////////////////
 ///////////////////////////////
 
-class Mesh{
+class Mesh_OBJ{
   Transform transform;
   Vector2D gravity;
   float mass;
@@ -104,10 +98,10 @@ class Mesh{
 
   Mesh *Mesh;
 
-
+  object_type type = mesh;
   void Move();
   void Scale(Vector2D);
   void Rotate(float);
-  H_Object detect_collision(const Grid **);
 };
-typedef Mesh* Mesh;
+typedef Mesh_OBJ* H_Mesh_OBJ;
+

@@ -1,6 +1,6 @@
 #pragma once
 #include <cmath>
-
+#include "bmath.h"
 #define CAMERA_FPS_30 30
 #define CAMERA_FPS_60 60
 #define CAMERA_FPS_144 144
@@ -20,13 +20,6 @@ MODES OF VIEWING
 #define FLAT_VIEW 0
 #define LIGHTING 1
 
-
-#ifdef DEBUG
-#define stuff goes here for debug idk
-
-#else
-
-#endif
 
 
 class Camera{

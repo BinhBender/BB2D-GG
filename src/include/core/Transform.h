@@ -1,7 +1,8 @@
+#pragma once
+
 #include <cmath>
 #include "Vector2D.h"
 
-#pragma once
 
 class Transform{
 public:

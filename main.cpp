@@ -5,7 +5,7 @@
 #include <vector>
 #include <chrono>
 
-#include "core/spacial/Vector2D.h"
+#include "core/Vector2D.h"
 #include "core/Input.h"
 
 #define WIDTH 800

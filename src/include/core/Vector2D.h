@@ -1,6 +1,8 @@
-#include <cmath>
-#include "./SDL2/SDL_rect.h"
 #pragma once
+
+#include <cmath>
+#include "../SDL2/SDL_rect.h"
+
 typedef SDL_FPoint Vector2D;
 
 float Magnitude(Vector2D);

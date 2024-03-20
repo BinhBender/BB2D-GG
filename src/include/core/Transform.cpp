@@ -25,7 +25,7 @@ Vector2D Transform::Move(Vector2D vector){
 /// @brief Turns the direction in accordance to the input RAD
 /// @param  radians
 /// @return Returns the new vector of the rotation.
-inline Vector2D Transform::Rotate(float radian)
+Vector2D Transform::Rotate(float radian)
 {
   float x = Rotation.x * cos(radian) - Rotation.y * sin(radian);
   float y = Rotation.x * sin(radian) + Rotation.y * sin(radian);

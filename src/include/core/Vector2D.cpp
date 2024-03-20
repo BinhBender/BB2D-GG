@@ -31,7 +31,7 @@ Vector2D operator/(Vector2D &self, const float scalar)
   return {self.x / scalar, self.y / scalar};
 }
 
-void operator+=(Vector2D &self,const Vector2D &other)
+void operator+=(Vector2D self, Vector2D other)
 {
   self = self + other;
 }
