@@ -13,7 +13,11 @@
 
 
 #define PRINT_ALL_DEBUG std::cout << "Y: " << i << " X: " << j << '\n';
-#define PRINT_DECONSTRUCTOR std::cout << "Y: " << i << " X: " << j << '\n';
+#define PRINT_DECONSTRUCTOR if (k % 6 == 0)\
+{\
+  std::cout << "\n    ";\
+}\
+std::cout << (k + 1) << ((k == grid_size - 1) ? "" : ", ");
 #else
 #define PRINT_ALL_DEBUG
 #define PRINT_DECONSTRUCTOR
@@ -85,7 +89,9 @@ public:
   void Resolve_Collision(OBJ_TYPE*, OBJ_TYPE*);
 
   void AddObject(int, int, object);
-  void RemoveObject(int, int, object);
+  object RemoveObject(int, int, object);
+
+  object GetObject(int, int, int);
 
   void PrintGrid(int, int);
   void PrintGridAll();

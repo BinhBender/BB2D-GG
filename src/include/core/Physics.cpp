@@ -20,7 +20,7 @@ Physics::~Physics()
   //deallocates the objects in the grid
   int grid_size = 0;
   object* grid_objects = nullptr;
-  std::cout << "Deleting: ";
+  //std::cout << "Deleting: ";
   for (int i = 0; i < GRID_Y; i++)
   {
     for (int j = 0; j < GRID_X; j++)
@@ -33,11 +33,7 @@ Physics::~Physics()
       {
         if (grid_objects[k] != nullptr)
         {
-          if (k% 6 == 0)
-          {
-            std::cout << "\n    ";
-          }
-          std::cout << (k + 1) << ", ";
+          PRINT_DECONSTRUCTOR
           delete grid_objects[k];
         }
       }
@@ -72,12 +68,17 @@ void* Physics::resize_grid(Grid *grid, int max_size)
   return grid->objects;
 }
 
+/// @brief Checks the radius of a given sphere with the raidus other spheres inside of other_bodies and if they
+/// @param other_bodies 
+/// @param sph_obj 
+/// @return 
 H_Sphere Physics::sphere_collision(const H_Grid *other_bodies, H_Sphere sph_obj)
 {
+  //Set the closest distance to infinite because we assume that 
   float closest_distance = __builtin_inff();
 
   H_Sphere collided = nullptr;
-  for (int i = 0; i < 9; i++)
+  for (int i = 0; i < MAX_GRID_GROUP_AMOUNT; i++)
   {
     if (other_bodies[i] != nullptr)
     {
@@ -85,7 +86,10 @@ H_Sphere Physics::sphere_collision(const H_Grid *other_bodies, H_Sphere sph_obj)
 
       for (int j = 0; j < max_size; j++)
       {
+        //item
         Sphere *object_to_check = (Sphere*)(other_bodies[i]->objects[i]);
+
+        //Distance between the objects
         float dist = Distance(sph_obj->transform.Position, object_to_check->transform.Position);
 
         if (closest_distance > dist)
@@ -152,17 +156,21 @@ void Physics::Update_Object()
   }
 }
 
+/// @brief 
+/// @param objectA 
+/// @param objectB 
 void Physics::Resolve_Collision(OBJ_TYPE *objectA, OBJ_TYPE *objectB)
 { 
 
 }
 
-/// @brief 
-/// @param x_coord 
-/// @param y_coord 
-/// @param obj 
+/// @brief Given a coordinate point on the grid between the bounds append the object to the end of that grid list
+/// @param x_coord The x coordinate on the grid too add in
+/// @param y_coord The y coordinate on the grid to add in
+/// @param obj The object to add 
 void Physics::AddObject(int x_coord, int y_coord, object obj)
 {
+  if(obj == nullptr) return;
   H_Grid grid = &bodies[y_coord][x_coord];
   if (grid->size > grid->max_size - 1)
   {
@@ -178,23 +186,32 @@ void Physics::AddObject(int x_coord, int y_coord, object obj)
 /// @brief 
 /// @param x_coord 
 /// @param y_coord 
-/// @param obj 
-void Physics::RemoveObject(int x_coord, int y_coord, object obj)
+/// @param obj
+object Physics::RemoveObject(int x_coord, int y_coord, object obj)
 {
   Grid *grid = &bodies[y_coord][x_coord];
   int grid_size = grid->max_size;
+  object returningOBJ = nullptr;
   for (int i = 0; i < grid_size; i++)
   {
     if(obj == grid->objects[i]){
       //Remove obj from list
+      returningOBJ = grid->objects[i];
       grid->objects[i] = nullptr;
       //Shift all objects back
         //Apparently memcpy/memset is faster due to asm optimization 
       memcpy(grid->objects + i, grid->objects + i + 1, sizeof(object) * (grid_size - i - 1));
-      memset(grid->objects + grid_size-i-1, 0, sizeof(object));
+      memset(grid->objects + grid->size, 0, sizeof(object));
     }
   }
   grid->size--;
+  return returningOBJ;
+}
+
+object Physics::GetObject(int y, int x, int index)
+{
+  object obj = bodies[y][x].objects[index]; 
+  return obj != nullptr ? bodies[y][x].objects[index] : nullptr;
 }
 
 /// @brief Prints the address of the specified grid from "bodies" with the index, max_size, and objects.
@@ -202,7 +219,7 @@ void Physics::RemoveObject(int x_coord, int y_coord, object obj)
 /// @param y The y coordinate grid address
 void Physics::PrintGrid(int y , int x)
 {
-  std::cout << "\nAddress: " << &bodies[y][x] << " Last index: " << bodies[y][x].size << ", max_size: " << bodies[y][x].max_size << '\n';
+  std::cout << "\nX: " << x << " Y: "<< y << " Last index: " << bodies[y][x].size << ", max_size: " << bodies[y][x].max_size << '\n';
   std::cout << "     ";
   for (size_t i = 0; i < bodies[y][x].size; i++)
   {
