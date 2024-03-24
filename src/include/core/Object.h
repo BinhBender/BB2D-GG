@@ -36,6 +36,8 @@ class Sphere
 {
 public:
   Transform transform;
+  
+  
   Vector2D gravity;
   float mass;
   Vector2D force;
@@ -51,9 +53,15 @@ public:
   Sphere(float);
   ~Sphere();
   void Move();
+  Vector2D FuturePosition();
+  
+
   void Scale(Vector2D);
   void Rotate(float);
 
+
+  void SetForce(Vector2D);
+  void AddForce(Vector2D);
 };
 typedef Sphere* H_Sphere;
 

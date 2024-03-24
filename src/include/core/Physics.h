@@ -34,6 +34,7 @@ std::cout << (k + 1) << ((k == grid_size - 1) ? "" : ", ");
 
 #define DEFAULT_GRID_CONTAINER_SIZE 10
 
+//Thu
 #define MAX_GRID_GROUP_AMOUNT 9
 /*
  | | | | | | |

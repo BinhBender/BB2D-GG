@@ -87,16 +87,19 @@ H_Sphere Physics::sphere_collision(const H_Grid *other_bodies, H_Sphere sph_obj)
       for (int j = 0; j < max_size; j++)
       {
         //item
-        Sphere *object_to_check = (Sphere*)(other_bodies[i]->objects[i]);
+        Sphere* object_to_check = (Sphere*)(other_bodies[i]->objects[i]);
 
         //Distance between the objects
-        float dist = Distance(sph_obj->transform.Position, object_to_check->transform.Position);
+        float dist = Distance(sph_obj->FuturePosition(), object_to_check->FuturePosition());
 
-        if (closest_distance > dist)
+        if (object_to_check->Radius + sph_obj->Radius < dist && closest_distance > dist)
         {
+          // Collision!         
           closest_distance = dist;
           collided = object_to_check;
         }
+
+        
       }
     }
   }
@@ -113,6 +116,9 @@ H_Rectangle Physics::rectangle_collision(const H_Grid *other_bodies, H_Rectangle
 {
 }
 
+/// @brief 
+/// @param x The specified center grid
+/// @param y 
 void Physics::Get_Surrounding_Grid(int x, int y){
   // Collect
   Vector2D startGrid = {B_Clamp(0, GRID_X, x - 1), B_Clamp(0, GRID_Y, y - 1)};
@@ -126,10 +132,13 @@ void Physics::Get_Surrounding_Grid(int x, int y){
   {
     for (int Grid_x = startGrid.x; Grid_x < endGrid.x; Grid_x++)
     {
+      //
       sub_bodies[grid_counter] = &bodies[Grid_y][Grid_x];
     }
   }
 }
+
+/// @brief Main physics loop, should not be called more than once per frame.
 void Physics::Update_Object()
 {
   for(int i = 0; i < GRID_Y; i++){
@@ -137,35 +146,32 @@ void Physics::Update_Object()
       Get_Surrounding_Grid(i, j); // After this runs, "sub_bodies" updates
       for (int k = 0; k < bodies[i][j].max_size; k++)
       {
-        H_Sphere collided = sphere_collision(sub_bodies, (Sphere *)(bodies[i][j].objects[k]));
-        // When updating there are 3 steps
+        H_Sphere subject_obj = (Sphere *)(bodies[i][j].objects[k]);
+
+        H_Sphere collided = sphere_collision(sub_bodies, subject_obj);
+
+        if(collided != nullptr)
+          Resolve_Collision(subject_obj, collided);
         
-        //  Detect Collision
-          /*How do we do this for different shapes?
-            Square is different from sphere/rectangle/trapizoid
-            What happens when it moves into multiple objects at once?
-          */
-
-        // Then move to the appropriate spot
-
-        // Fix the objects
+        subject_obj->Move();
+        //TODO: update object grid coordinates here if it goes out of the bounds
       }
-
-      
     }
   }
 }
 
-/// @brief 
+/// @brief How the object will behave after colliding with another object.
 /// @param objectA 
 /// @param objectB 
 void Physics::Resolve_Collision(OBJ_TYPE *objectA, OBJ_TYPE *objectB)
 { 
+  //Since there is "ghosting" of an object in collision, we have to find the positions of the objects AT the moment of collision. Next return the resulting force vector of the collision to both objects
+
 
 }
 
 /// @brief Given a coordinate point on the grid between the bounds append the object to the end of that grid list
-/// @param x_coord The x coordinate on the grid too add in
+/// @param x_coord The x coordinate on the grid to add in
 /// @param y_coord The y coordinate on the grid to add in
 /// @param obj The object to add 
 void Physics::AddObject(int x_coord, int y_coord, object obj)
@@ -210,8 +216,8 @@ object Physics::RemoveObject(int x_coord, int y_coord, object obj)
 
 object Physics::GetObject(int y, int x, int index)
 {
-  object obj = bodies[y][x].objects[index]; 
-  return obj != nullptr ? bodies[y][x].objects[index] : nullptr;
+  object obj = bodies[y][x].objects[index];
+  return obj != nullptr ? obj : nullptr;
 }
 
 /// @brief Prints the address of the specified grid from "bodies" with the index, max_size, and objects.

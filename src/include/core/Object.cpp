@@ -25,9 +25,12 @@ Sphere::~Sphere()
 /// @brief Updates the object with the force and moves it according to direction and magnitude of the force
 void Sphere::Move()
 {
-  transform.Position += force;
+  transform.Position = FuturePosition();
 }
 
+Vector2D Sphere::FuturePosition(){
+  return transform.Position + force;
+}
 /// @brief Updates the size of the object
 /// @param  ScalingVector A Vector2D that contains the scalars of x and y
 void Sphere::Scale(Vector2D ScalingVector)
@@ -40,4 +43,14 @@ void Sphere::Scale(Vector2D ScalingVector)
 void Sphere::Rotate(float Radians)
 {
   transform.Rotate(Radians);
+}
+
+void Sphere::SetForce(Vector2D f)
+{
+  force = f;
+}
+
+void Sphere::AddForce(Vector2D f)
+{
+  force += f;
 }
