@@ -86,11 +86,10 @@ H_Sphere Physics::sphere_collision(const H_Grid *other_bodies, H_Sphere sph_obj)
 
       for (int j = 0; j < max_size; j++)
       {
-        //item
         Sphere* object_to_check = (Sphere*)(other_bodies[i]->objects[i]);
 
         //Distance between the objects
-        float dist = Distance(sph_obj->FuturePosition(), object_to_check->FuturePosition());
+        float dist = Distance(sph_obj->transform.Position, object_to_check->transform.Position);
 
         if (object_to_check->Radius + sph_obj->Radius < dist && closest_distance > dist)
         {
@@ -116,11 +115,15 @@ H_Rectangle Physics::rectangle_collision(const H_Grid *other_bodies, H_Rectangle
 {
 }
 
-/// @brief 
+/// @brief This function will get the surrounding grid tiles around the specified x and y in a 3x3 (boundaries are safe).
 /// @param x The specified center grid
 /// @param y 
-void Physics::Get_Surrounding_Grid(int x, int y){
-  // Collect
+bool Physics::Get_Surrounding_Grid(int x, int y){
+  //Check if arguments are within bounds
+  if(x > GRID_X || x < 0) return false;
+  if(y > GRID_Y || y < 0) return false;
+
+
   Vector2D startGrid = {B_Clamp(0, GRID_X, x - 1), B_Clamp(0, GRID_Y, y - 1)};
   Vector2D endGrid = {B_Clamp(0, GRID_X, x + 1), B_Clamp(0, GRID_Y, y + 1)};
 
@@ -136,6 +139,8 @@ void Physics::Get_Surrounding_Grid(int x, int y){
       sub_bodies[grid_counter] = &bodies[Grid_y][Grid_x];
     }
   }
+
+  return true;
 }
 
 /// @brief Main physics loop, should not be called more than once per frame.
@@ -146,28 +151,56 @@ void Physics::Update_Object()
       Get_Surrounding_Grid(i, j); // After this runs, "sub_bodies" updates
       for (int k = 0; k < bodies[i][j].max_size; k++)
       {
-        H_Sphere subject_obj = (Sphere *)(bodies[i][j].objects[k]);
-
+        H_Sphere subject_obj = (H_Sphere)(bodies[i][j].objects[k]);
         H_Sphere collided = sphere_collision(sub_bodies, subject_obj);
 
-        if(collided != nullptr)
-          Resolve_Collision(subject_obj, collided);
-        
+
+        //Friction
+        if (collided != nullptr)
+        {
+          Resolve_Collision(subject_obj, collided, 0.5);
+          collided->Move();
+          Vector2D collided_new_grid = {int(collided->transform.Position.x / SPACE_PER_GRID_X), int(collided->transform.Position.y / SPACE_PER_GRID_Y)};
+          if (collided_new_grid != Vector2D{float(j), float(i)})
+          {
+            AddObject(collided_new_grid.x, collided_new_grid.y, RemoveObject(j, i, collided));
+          }
+        }
+        //float friction = subject_obj->mass * Default_Gravity.y * subject_obj->friction;
         subject_obj->Move();
-        //TODO: update object grid coordinates here if it goes out of the bounds
+        Vector2D newGrid = { int(subject_obj->transform.Position.x / SPACE_PER_GRID_X), int(subject_obj->transform.Position.y / SPACE_PER_GRID_Y) };
+        if (newGrid != Vector2D{float(j), float(i)})
+        {
+          AddObject(newGrid.x, newGrid.y, RemoveObject(j, i, subject_obj));
+        }
+        
       }
     }
   }
 }
 
+
+Vector2D final_velocity(const OBJ_TYPE *A, const OBJ_TYPE *B)
+{
+  // https://en.wikipedia.org/wiki/Elastic_collision#cite_ref-serway258_2-0
+  Vector2D pos_diff = A->transform.Position - B->transform.Position;
+  float dot = DotProduct(A->force - B->force, pos_diff);
+
+  //TODO: change the Magnitude function to its squared equivalent
+  Vector2D final = A->force - (2 * B->mass / (A->mass + B->mass)) * (dot / (Magnitude(pos_diff) * Magnitude(pos_diff))) * pos_diff;
+
+  return final;
+}
+
 /// @brief How the object will behave after colliding with another object.
 /// @param objectA 
 /// @param objectB 
-void Physics::Resolve_Collision(OBJ_TYPE *objectA, OBJ_TYPE *objectB)
-{ 
-  //Since there is "ghosting" of an object in collision, we have to find the positions of the objects AT the moment of collision. Next return the resulting force vector of the collision to both objects
-
-
+void Physics::Resolve_Collision(OBJ_TYPE *objectA, OBJ_TYPE *objectB, float ForceScale)
+{
+  // Since there is "ghosting" of an object in collision, we have to find the positions of the objects AT the moment of collision. Next return the resulting force vector of the collision to both objects
+  objectA->SetForce(final_velocity(objectA, objectB) * ForceScale);
+  objectB->SetForce(final_velocity(objectB, objectA) * ForceScale);
+  
 }
 
 /// @brief Given a coordinate point on the grid between the bounds append the object to the end of that grid list
@@ -189,10 +222,10 @@ void Physics::AddObject(int x_coord, int y_coord, object obj)
   grid->size++;
 }
 
-/// @brief 
-/// @param x_coord 
-/// @param y_coord 
-/// @param obj
+/// @brief Removes an object from a specified grid given the grid coordinate and object address. Note: This does NOT delete the object so it has to be used in conjunction with AddObject and should only be used in order to switch the grids location of the objects
+/// @param x_coord X Coordinate of the grid.
+/// @param y_coord Y Coordinate of the grid.
+/// @param obj  Address of the object.
 object Physics::RemoveObject(int x_coord, int y_coord, object obj)
 {
   Grid *grid = &bodies[y_coord][x_coord];

@@ -12,37 +12,50 @@ float Distance(Vector2D self, Vector2D other){
 
 }
 
+Vector2D Normalize(Vector2D self){
+  return self / Magnitude(self);
+}
+
 Vector2D operator+(const Vector2D &self, const Vector2D &other)
 {
   return {self.x + other.x, self.y + other.y};
 }
-Vector2D operator-(Vector2D &self, const Vector2D &other)
+Vector2D operator-(const Vector2D &self, const Vector2D &other)
 {
 
   return {self.x - other.x, self.y - other.y};
 }
 
-Vector2D operator*(Vector2D &self, float scalar){
+Vector2D operator*(const Vector2D &self, const float &scalar)
+{
 
   return {self.x * scalar, self.y * scalar};
 }
-Vector2D operator/(Vector2D &self, const float scalar)
+Vector2D operator*(const float &scalar, const Vector2D &self)
+{
+  return {self.x * scalar, self.y * scalar};
+}
+Vector2D operator/(const Vector2D &self, const float &scalar)
 {
   return {self.x / scalar, self.y / scalar};
 }
 
-void operator+=(Vector2D self, Vector2D other)
+void operator+=(Vector2D &self, const Vector2D &other)
 {
   self = self + other;
 }
 
+void operator-=(Vector2D &self, const Vector2D &other)
+{
+  self = self - other;
+}
 
-bool operator==(Vector2D self, Vector2D other)
+bool operator==(const Vector2D &self, const Vector2D &other)
 {
   return (self.x && other.x) && (self.y && other.y);
 }
 
-bool operator!=(Vector2D self, Vector2D other)
+bool operator!=(const Vector2D &self, const Vector2D &other)
 {
   return !(self.x && other.x) && (self.y && other.y);
 }

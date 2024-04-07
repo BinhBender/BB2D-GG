@@ -5,8 +5,9 @@
 #include <vector>
 #include <chrono>
 
-#include "core/Vector2D.h"
+#include "core/time.h"
 #include "core/Input.h"
+#include "core/Vector2D.h"
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -31,13 +32,9 @@ int main(int argc, char *argv[])
   }
 
   SDL_Event windowEvent;
-  std::vector<SDL_Vertex> verts = {
-    SDL_Vertex{SDL_FPoint{100, 100}, SDL_Color{255, 0, 0, 255}, SDL_FPoint{0}},
-    SDL_Vertex{SDL_FPoint{200, 100}, SDL_Color{255, 255, 0, 255}, SDL_FPoint{0}},
-    SDL_Vertex{SDL_FPoint{600, 500}, SDL_Color{0, 0, 255, 255}, SDL_FPoint{0}},
-    SDL_Vertex{SDL_FPoint{100, 200}, SDL_Color{0, 0, 255, 255}, SDL_FPoint{0}},
-
-  };
+  int *mouse_x;
+  int *mouse_y; 
+  SDL_GetMouseState(mouse_x, mouse_y);
   std::vector<int> indicies = {0, 1, 2, 1, 2, 3};
   // SDL_Point *points = {SDL_FPoint{500, 500}, SDL_FPoint{570, 700}};
   bool running = true;
@@ -55,7 +52,7 @@ int main(int argc, char *argv[])
           running = false;
           break;
       }
-    }
+    }/*
     if (InputHandler->GetKey(SDL_SCANCODE_W)){
 
       verts[0].position.y -= 10;
@@ -74,10 +71,10 @@ int main(int argc, char *argv[])
     {
 
       verts[0].position.x -= 10;
-    }
-
+    }*/
+    std::cout << mouse_x << "          " << mouse_y << std::endl;
     SDL_RenderClear(renderer);
-    SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), indicies.data(), indicies.size());
+    //SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), indicies.data(), indicies.size());
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
 
     SDL_RenderPresent(renderer);

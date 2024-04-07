@@ -20,4 +20,3 @@ public:
   ~Time();
 };
 
-float Time::deltaTime = 0;

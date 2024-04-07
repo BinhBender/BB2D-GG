@@ -1,0 +1,2 @@
+The sphereical collision of the physics class is very primitive. It should work in most slow velocity cases but at higher velocity will become unreliable.
+  The reason for this inaccuracy is its tradeoff for speed.

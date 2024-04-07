@@ -42,6 +42,9 @@ public:
   float mass;
   Vector2D force;
 
+  float velocity;
+  float acceleration;  
+
   float friction;
   float bounce;
 

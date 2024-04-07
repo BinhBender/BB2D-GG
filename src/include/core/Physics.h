@@ -5,7 +5,7 @@
 #include "Transform.h"
 #include "Object.h"
 #include "string.h"
-
+#include "time.h"
 #include <iostream>
 
 #define PHYSICS_DEBUG
@@ -28,9 +28,14 @@ std::cout << (k + 1) << ((k == grid_size - 1) ? "" : ", ");
   collision response
   rotation
 */
+#define WORLD_SPACE_LIMIT_X 160
+#define WORLD_SPACE_LIMIT_Y 90
 
 #define GRID_X 16 //The amount of grid spaces on the x
 #define GRID_Y 9  //The amount of grid spaces on the y
+
+#define SPACE_PER_GRID_X WORLD_SPACE_LIMIT_X / GRID_X
+#define SPACE_PER_GRID_Y WORLD_SPACE_LIMIT_Y / GRID_Y
 
 #define DEFAULT_GRID_CONTAINER_SIZE 10
 
@@ -74,11 +79,13 @@ private:
   };
 
   void* resize_grid(Grid*, int);
-  void Get_Surrounding_Grid(int, int);
+  bool Get_Surrounding_Grid(int, int);
   H_Sphere sphere_collision(const H_Grid *, H_Sphere sph_obj);
   H_Mesh_OBJ mesh_collision(const H_Grid *, H_Mesh_OBJ);
   H_Rectangle rectangle_collision(const H_Grid *, H_Rectangle);
 
+
+  
 public:
   void* detect_collision();
 
@@ -87,7 +94,7 @@ public:
   Physics();
   ~Physics();
   void Update_Object();
-  void Resolve_Collision(OBJ_TYPE*, OBJ_TYPE*);
+  void Resolve_Collision(OBJ_TYPE*, OBJ_TYPE*, float);
 
   void AddObject(int, int, object);
   object RemoveObject(int, int, object);
@@ -95,6 +102,7 @@ public:
   object GetObject(int, int, int);
 
   void PrintGrid(int, int);
+  
   void PrintGridAll();
 };
 

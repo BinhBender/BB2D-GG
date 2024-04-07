@@ -26,6 +26,8 @@ Sphere::~Sphere()
 void Sphere::Move()
 {
   transform.Position = FuturePosition();
+
+  
 }
 
 Vector2D Sphere::FuturePosition(){
