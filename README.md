@@ -1,4 +1,4 @@
-BB2D-GG (BinhBender 2-Dimensional - GG)
+BB2D-GG (BinhBender 2-Dimensional - Game enGine)
 
 This is a personal project that I will use to help teach me physics simulation, mesh (or just general shapes) collision, and rendering with triangles.
 
