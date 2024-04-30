@@ -32,9 +32,9 @@ int main(int argc, char *argv[])
   }
 
   SDL_Event windowEvent;
-  int *mouse_x;
-  int *mouse_y; 
-  SDL_GetMouseState(mouse_x, mouse_y);
+  int mouse_x;
+  int mouse_y; 
+  SDL_GetMouseState(&mouse_x, &mouse_y);
   std::vector<int> indicies = {0, 1, 2, 1, 2, 3};
   // SDL_Point *points = {SDL_FPoint{500, 500}, SDL_FPoint{570, 700}};
   bool running = true;
