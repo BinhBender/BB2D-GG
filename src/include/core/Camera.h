@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
 #include "bmath.h"
-#include "./SDL2/SDL.h"
+#include "../SDL2/SDL.h"
 #include "Physics.h"
 #include "Object.h"
 

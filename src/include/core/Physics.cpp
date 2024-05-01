@@ -8,7 +8,8 @@ Physics::Physics()
   {
     for (int j = 0; j < GRID_X; j++)
     {
-      bodies[i][j] = { new void*[DEFAULT_GRID_CONTAINER_SIZE], DEFAULT_GRID_CONTAINER_SIZE, 0 };
+
+      bodies[i][j] = {new object[DEFAULT_GRID_CONTAINER_SIZE], DEFAULT_GRID_CONTAINER_SIZE, 0 };
     
     }
   }
@@ -19,7 +20,7 @@ Physics::~Physics()
 {
   //deallocates the objects in the grid
   int grid_size = 0;
-  object* grid_objects = nullptr;
+  objectArr grid_objects = nullptr;
   //std::cout << "Deleting: ";
   for (int i = 0; i < GRID_Y; i++)
   {
@@ -34,7 +35,8 @@ Physics::~Physics()
         if (grid_objects[k] != nullptr)
         {
           PRINT_DECONSTRUCTOR
-          delete grid_objects[k];
+          delete H_Sphere(grid_objects[k]);
+          //      ^^^ remove this later when the collision gets generalized
         }
       }
       //Deletes grid
@@ -75,7 +77,7 @@ void* Physics::resize_grid(Grid *grid, int max_size)
 H_Sphere Physics::sphere_collision(const H_Grid *other_bodies, H_Sphere sph_obj)
 {
   //Set the closest distance to infinite because we assume that 
-  float closest_distance = __builtin_inff();
+  float closest_distance = INFINITY;
 
   H_Sphere collided = nullptr;
   for (int i = 0; i < MAX_GRID_GROUP_AMOUNT; i++)
@@ -108,11 +110,12 @@ H_Sphere Physics::sphere_collision(const H_Grid *other_bodies, H_Sphere sph_obj)
 
 H_Mesh_OBJ Physics::mesh_collision(const H_Grid *other_bodies, H_Mesh_OBJ obj)
 {
-
+  return nullptr;
 }
 
 H_Rectangle Physics::rectangle_collision(const H_Grid *other_bodies, H_Rectangle obj)
 {
+  return nullptr;
 }
 
 /// @brief This function will get the surrounding grid tiles around the specified x and y in a 3x3 (boundaries are safe).

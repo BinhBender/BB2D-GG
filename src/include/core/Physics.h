@@ -8,7 +8,7 @@
 #include "time.h"
 #include <iostream>
 
-#define PHYSICS_DEBUG
+//#define PHYSICS_DEBUG
 #ifdef PHYSICS_DEBUG
 
 
@@ -22,12 +22,7 @@ std::cout << (k + 1) << ((k == grid_size - 1) ? "" : ", ");
 #define PRINT_ALL_DEBUG
 #define PRINT_DECONSTRUCTOR
 #endif
-/*
-  needs 
-  collision detection
-  collision response
-  rotation
-*/
+
 #define WORLD_SPACE_LIMIT_X 160
 #define WORLD_SPACE_LIMIT_Y 90
 
@@ -38,8 +33,6 @@ std::cout << (k + 1) << ((k == grid_size - 1) ? "" : ", ");
 #define SPACE_PER_GRID_Y WORLD_SPACE_LIMIT_Y / GRID_Y
 
 #define DEFAULT_GRID_CONTAINER_SIZE 10
-
-//Thu
 #define MAX_GRID_GROUP_AMOUNT 9
 /*
  | | | | | | |
@@ -50,12 +43,12 @@ std::cout << (k + 1) << ((k == grid_size - 1) ? "" : ", ");
 */
 // Each grid will have array of pointers to OBJ_TYPE as well as a count for the number of items in the grid
 typedef void* object;
-
+typedef object* objectArr;
 
 
 struct Grid
 {
-  object* objects;   // Array of the OBJ_TYPE
+  objectArr objects;   // Array of the OBJ_TYPE
   int max_size = 0;      // Max size of the array, Default: 10, doubles everytime it reaches max.
   int size = 0; // Keeps track of the index of the last OBJ_TYPE added.
 };
@@ -66,7 +59,7 @@ private:
 
 
   //Dividing the scene into grids for computational efficiency
-  Grid bodies[GRID_Y][GRID_X] = {0};
+  Grid bodies[GRID_Y][GRID_X];
 
   H_Grid sub_bodies[9] = {nullptr};
   union{
@@ -84,16 +77,18 @@ private:
   H_Mesh_OBJ mesh_collision(const H_Grid *, H_Mesh_OBJ);
   H_Rectangle rectangle_collision(const H_Grid *, H_Rectangle);
 
+  void* detect_collision();
 
   
 public:
-  void* detect_collision();
-
-
 
   Physics();
   ~Physics();
+
+  
+  #pragma GCC diagnostic ignored "-Wnarrowing"
   void Update_Object();
+
   void Resolve_Collision(OBJ_TYPE*, OBJ_TYPE*, float);
 
   void AddObject(int, int, object);

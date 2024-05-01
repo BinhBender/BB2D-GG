@@ -1,11 +1,13 @@
-#include "Object.h"
 #pragma once
+#include "Object.h"
+#include "Physics.h"
 
 //The umbrella class
 
+
+
 class Scene{
   //Objects
-  //Physical objects
-  void** RigidBodies;
+  objectArr sceneObjects;
 
 };

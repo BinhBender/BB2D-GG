@@ -4,7 +4,7 @@
 #include "Vector2D.h"
 #include "Transform.h"
 #include "mesh.h"
-#include "./SDL2/SDL_rect.h"
+#include "../SDL2/SDL_rect.h"
 
 #define Default_Gravity Vector2D{0, -9.81}
 #define Default_Mass 1
