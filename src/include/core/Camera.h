@@ -4,14 +4,13 @@
 #include "../SDL2/SDL.h"
 #include "Physics.h"
 #include "Object.h"
+#include "scene.h"
 
 #define CAMERA_FPS_30 30
 #define CAMERA_FPS_60 60
 #define CAMERA_FPS_144 144
 #define CAMERA_FPS_UNLIMITED -1
 
-/*
-*/
 #define FLAT_VIEW 0
 #define LIGHTING 1
 
@@ -23,8 +22,6 @@ private:
   SDL_Window *SDL_WINDOW_CONTEXT;
   SDL_Renderer* RENDERER;
 
-
-  void** objects;
 public:
   void render(void*, int);
 

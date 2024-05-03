@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bmath.h"
+#include "Bmath.h"
 #include "Vector2D.h"
 #include "Transform.h"
 #include "Object.h"
@@ -8,16 +8,12 @@
 #include "time.h"
 #include <iostream>
 
-//#define PHYSICS_DEBUG
+#define PHYSICS_DEBUG
 #ifdef PHYSICS_DEBUG
 
 
 #define PRINT_ALL_DEBUG std::cout << "Y: " << i << " X: " << j << '\n';
-#define PRINT_DECONSTRUCTOR if (k % 6 == 0)\
-{\
-  std::cout << "\n    ";\
-}\
-std::cout << (k + 1) << ((k == grid_size - 1) ? "" : ", ");
+#define PRINT_DECONSTRUCTOR(x, index) std::cout << (index + 1) << ((index % 6 == 5) ? "\n" : ", ");
 #else
 #define PRINT_ALL_DEBUG
 #define PRINT_DECONSTRUCTOR
@@ -42,7 +38,9 @@ std::cout << (k + 1) << ((k == grid_size - 1) ? "" : ", ");
  | | | | | | |
 */
 // Each grid will have array of pointers to OBJ_TYPE as well as a count for the number of items in the grid
-typedef void* object;
+
+
+typedef Sphere* object;
 typedef object* objectArr;
 
 
@@ -62,14 +60,7 @@ private:
   Grid bodies[GRID_Y][GRID_X];
 
   H_Grid sub_bodies[9] = {nullptr};
-  union{
-    struct{
-      int sizex;
-      int sizey;
 
-    };
-    int size[2];
-  };
 
   void* resize_grid(Grid*, int);
   bool Get_Surrounding_Grid(int, int);
@@ -91,7 +82,7 @@ public:
 
   void Resolve_Collision(OBJ_TYPE*, OBJ_TYPE*, float);
 
-  void AddObject(int, int, object);
+  bool AddObject(int, int, object);
   object RemoveObject(int, int, object);
 
   object GetObject(int, int, int);

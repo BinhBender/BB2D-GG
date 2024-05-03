@@ -2,15 +2,16 @@
 
 Physics::Physics()
 {
-  int sizey = GRID_Y;
-  int sizex = GRID_X;
   for (int i = 0; i < GRID_Y; i++)
   {
     for (int j = 0; j < GRID_X; j++)
     {
-
-      bodies[i][j] = {new object[DEFAULT_GRID_CONTAINER_SIZE], DEFAULT_GRID_CONTAINER_SIZE, 0 };
-    
+      bodies[i][j] = {
+        new object[DEFAULT_GRID_CONTAINER_SIZE], 
+        DEFAULT_GRID_CONTAINER_SIZE, 
+        0 
+      };
+      memset(bodies[i][j].objects,0,sizeof(Sphere) * DEFAULT_GRID_CONTAINER_SIZE);
     }
   }
   
@@ -29,18 +30,21 @@ Physics::~Physics()
       //PRINT_DECONSTRUCTOR
       grid_size = bodies[i][j].size;
       grid_objects = bodies[i][j].objects;
+      bodies[i][j].objects = nullptr;
       //Deleting individual grid objects
       for (int k = 0; k < grid_size; k++)
       {
         if (grid_objects[k] != nullptr)
         {
-          PRINT_DECONSTRUCTOR
-          delete H_Sphere(grid_objects[k]);
-          //      ^^^ remove this later when the collision gets generalized
+          PRINT_DECONSTRUCTOR(grid_size, k)
+          delete grid_objects[k];
+          
+          grid_objects[k] = nullptr;
         }
       }
-      //Deletes grid
+      //Deletes the grid array
       delete[] grid_objects;
+      
     }
   }
 }
@@ -54,7 +58,7 @@ void* Physics::resize_grid(Grid *grid, int max_size)
   if(max_size < grid->max_size) return nullptr;
   
   //Allocate a new array for objects
-  void** new_grid_object_container = new void*[max_size];
+  objectArr new_grid_object_container = new object[max_size];
 
   //Copy the data from the old array to the new one
   memcpy(new_grid_object_container, grid->objects, sizeof(object) * grid->max_size);
@@ -91,13 +95,15 @@ H_Sphere Physics::sphere_collision(const H_Grid *other_bodies, H_Sphere sph_obj)
         Sphere* object_to_check = (Sphere*)(other_bodies[i]->objects[i]);
 
         //Distance between the objects
+        //printf("Transform of obj: %i, %f, %f \n", j, sph_obj->transform.Position.x, sph_obj->transform.Position.y, sph_obj->transform.Position);
         float dist = Distance(sph_obj->transform.Position, object_to_check->transform.Position);
-
-        if (object_to_check->Radius + sph_obj->Radius < dist && closest_distance > dist)
+        //printf("%f",dist);
+        if ((object_to_check->Radius + sph_obj->Radius > dist) && (closest_distance > dist))
         {
           // Collision!         
           closest_distance = dist;
           collided = object_to_check;
+          printf("hit");
         }
 
         
@@ -126,7 +132,7 @@ bool Physics::Get_Surrounding_Grid(int x, int y){
   if(x > GRID_X || x < 0) return false;
   if(y > GRID_Y || y < 0) return false;
 
-
+  //printf("x: %u, y: %u\n", x, y);
   Vector2D startGrid = {B_Clamp(0, GRID_X, x - 1), B_Clamp(0, GRID_Y, y - 1)};
   Vector2D endGrid = {B_Clamp(0, GRID_X, x + 1), B_Clamp(0, GRID_Y, y + 1)};
 
@@ -151,16 +157,18 @@ void Physics::Update_Object()
 {
   for(int i = 0; i < GRID_Y; i++){
     for(int j = 0; j < GRID_X; j++){
-      Get_Surrounding_Grid(i, j); // After this runs, "sub_bodies" updates
-      for (int k = 0; k < bodies[i][j].max_size; k++)
+      Get_Surrounding_Grid(j, i); // After this runs, "sub_bodies" updates
+      for (int k = 0; k < bodies[i][j].size; k++)
       {
         H_Sphere subject_obj = (H_Sphere)(bodies[i][j].objects[k]);
+        //printf("Starting collision detection \n");
         H_Sphere collided = sphere_collision(sub_bodies, subject_obj);
 
+        //printf("Ended collision detection \n");
 
-        //Friction
         if (collided != nullptr)
         {
+          printf("Resolving Collision");
           Resolve_Collision(subject_obj, collided, 0.5);
           collided->Move();
           Vector2D collided_new_grid = {int(collided->transform.Position.x / SPACE_PER_GRID_X), int(collided->transform.Position.y / SPACE_PER_GRID_Y)};
@@ -168,7 +176,9 @@ void Physics::Update_Object()
           {
             AddObject(collided_new_grid.x, collided_new_grid.y, RemoveObject(j, i, collided));
           }
+          printf("Collision Resolved");
         }
+        
         //float friction = subject_obj->mass * Default_Gravity.y * subject_obj->friction;
         subject_obj->Move();
         Vector2D newGrid = { int(subject_obj->transform.Position.x / SPACE_PER_GRID_X), int(subject_obj->transform.Position.y / SPACE_PER_GRID_Y) };
@@ -176,17 +186,20 @@ void Physics::Update_Object()
         {
           AddObject(newGrid.x, newGrid.y, RemoveObject(j, i, subject_obj));
         }
-        
+        printf("\n x: %f, y: %f\n" ,subject_obj->transform.Position.x ,subject_obj->transform.Position.y);
       }
     }
   }
+  printf("End of Update Function\n");
 }
 
 
-Vector2D final_velocity(const OBJ_TYPE *A, const OBJ_TYPE *B)
+Vector2D final_velocity(const object A, const object B)
 {
   // https://en.wikipedia.org/wiki/Elastic_collision#cite_ref-serway258_2-0
   Vector2D pos_diff = A->transform.Position - B->transform.Position;
+  if(!pos_diff.x && !pos_diff.y) return Vector2_One;
+  
   float dot = DotProduct(A->force - B->force, pos_diff);
 
   //TODO: change the Magnitude function to its squared equivalent
@@ -210,9 +223,12 @@ void Physics::Resolve_Collision(OBJ_TYPE *objectA, OBJ_TYPE *objectB, float Forc
 /// @param x_coord The x coordinate on the grid to add in
 /// @param y_coord The y coordinate on the grid to add in
 /// @param obj The object to add 
-void Physics::AddObject(int x_coord, int y_coord, object obj)
+bool Physics::AddObject(int x_coord, int y_coord, object obj)
 {
-  if(obj == nullptr) return;
+  if(obj == nullptr) return false;
+  if(x_coord > GRID_X - 1) return false;
+  if(y_coord > GRID_Y - 1) return false;
+  
   H_Grid grid = &bodies[y_coord][x_coord];
   if (grid->size > grid->max_size - 1)
   {
@@ -221,8 +237,9 @@ void Physics::AddObject(int x_coord, int y_coord, object obj)
   }
 
   grid->objects[grid->size] = obj;
-
+  
   grid->size++;
+  return true;
 }
 
 /// @brief Removes an object from a specified grid given the grid coordinate and object address. Note: This does NOT delete the object so it has to be used in conjunction with AddObject and should only be used in order to switch the grids location of the objects
@@ -259,19 +276,19 @@ object Physics::GetObject(int y, int x, int index)
 /// @brief Prints the address of the specified grid from "bodies" with the index, max_size, and objects.
 /// @param x The x coordinate grid address
 /// @param y The y coordinate grid address
-void Physics::PrintGrid(int y , int x)
+void Physics::PrintGrid(int x , int y)
 {
+  if(x > GRID_X - 1 || y > GRID_Y - 1) return;
   std::cout << "\nX: " << x << " Y: "<< y << " Last index: " << bodies[y][x].size << ", max_size: " << bodies[y][x].max_size << '\n';
   std::cout << "     ";
   for (size_t i = 0; i < bodies[y][x].size; i++)
   {
     std::cout << bodies[y][x].objects[i] << " ";
     if((i + 1) % 6 == 0){
-      std::cout << std::endl;
-      std::cout << "     ";
+      std::cout << std::endl << "     ";
     }
   }
-  
+  printf("\n");
 }
 /// @brief Prints the address of all grids from "bodies" with the index, max_size, and objects.
 /// @param x The x coordinate grid address

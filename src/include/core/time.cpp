@@ -1,7 +1,7 @@
 #include "time.h"
 
 float Time::deltaTime = 0;
-
+Time* Time::instance = nullptr;
 Time::Time()
 {
 
@@ -19,10 +19,10 @@ void Time::end_time()
   deltaTime = duration.count();
 }
 
-Time *Time::GetInstance()
+Time* Time::GetInstance()
 {
   if(instance == nullptr){
-    return new Time();
+    instance = new Time();
   }
   return instance;
 }

@@ -1,6 +1,7 @@
 #include "Object.h"
 Sphere::Sphere()
 {
+  
   gravity = Default_Gravity;
   mass = Default_Mass;
 
