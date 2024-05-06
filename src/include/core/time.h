@@ -1,6 +1,7 @@
 #include <chrono>
 #include <thread>
-
+#include <cstdio>
+#pragma once
 
 class Time{
 

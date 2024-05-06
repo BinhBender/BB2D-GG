@@ -1,10 +1,13 @@
 #include "Camera.h"
 
+Camera::Camera(SDL_Window * window, SDL_Renderer* renderer)
+{
+  this->window = window;
+  this->renderer = renderer;
+}
 
-
-
-void Camera::render(void* objects, int size){
-  
+void Camera::render(void *objects, int size)
+{
 }
 
 void Camera::DrawCircles(H_Sphere *objects, int size)
@@ -32,14 +35,14 @@ void Camera::DrawCircle(H_Sphere object)
   while (x >= y)
   {
     //  Each of the following renders an octant of the circle
-    SDL_RenderDrawPoint(RENDERER, centreX + x, centreY - y);
-    SDL_RenderDrawPoint(RENDERER, centreX + x, centreY + y);
-    SDL_RenderDrawPoint(RENDERER, centreX - x, centreY - y);
-    SDL_RenderDrawPoint(RENDERER, centreX - x, centreY + y);
-    SDL_RenderDrawPoint(RENDERER, centreX + y, centreY - x);
-    SDL_RenderDrawPoint(RENDERER, centreX + y, centreY + x);
-    SDL_RenderDrawPoint(RENDERER, centreX - y, centreY - x);
-    SDL_RenderDrawPoint(RENDERER, centreX - y, centreY + x);
+    SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
+    SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
+    SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
+    SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
+    SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
+    SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
+    SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
+    SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
 
     if (error <= 0)
     {

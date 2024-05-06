@@ -14,15 +14,18 @@
 #define FLAT_VIEW 0
 #define LIGHTING 1
 
-
+#define CAMERA_RESOLUTION_X 720
+#define CAMERA_RESOLUTION_Y 1280
 
 class Camera{
 private:
   int FPS = CAMERA_FPS_60;
-  SDL_Window *SDL_WINDOW_CONTEXT;
-  SDL_Renderer* RENDERER;
+  SDL_Window* window;
+  SDL_Renderer* renderer;
 
 public:
+  Camera(SDL_Window*, SDL_Renderer*);
+
   void render(void*, int);
 
   void DrawCircles(H_Sphere*, int);

@@ -11,7 +11,7 @@ Physics::Physics()
         DEFAULT_GRID_CONTAINER_SIZE, 
         0 
       };
-      memset(bodies[i][j].objects,0,sizeof(Sphere) * DEFAULT_GRID_CONTAINER_SIZE);
+      memset(bodies[i][j].objects,0,sizeof(object) * DEFAULT_GRID_CONTAINER_SIZE);
     }
   }
   
@@ -36,7 +36,7 @@ Physics::~Physics()
       {
         if (grid_objects[k] != nullptr)
         {
-          PRINT_DECONSTRUCTOR(grid_size, k)
+          PRINT_DECONSTRUCTOR(grid_size, k);
           delete grid_objects[k];
           
           grid_objects[k] = nullptr;
@@ -103,7 +103,7 @@ H_Sphere Physics::sphere_collision(const H_Grid *other_bodies, H_Sphere sph_obj)
           // Collision!         
           closest_distance = dist;
           collided = object_to_check;
-          printf("hit");
+          //printf("hit");
         }
 
         
@@ -168,7 +168,7 @@ void Physics::Update_Object()
 
         if (collided != nullptr)
         {
-          printf("Resolving Collision");
+          //printf("Resolving Collision");
           Resolve_Collision(subject_obj, collided, 0.5);
           collided->Move();
           Vector2D collided_new_grid = {int(collided->transform.Position.x / SPACE_PER_GRID_X), int(collided->transform.Position.y / SPACE_PER_GRID_Y)};
@@ -176,7 +176,7 @@ void Physics::Update_Object()
           {
             AddObject(collided_new_grid.x, collided_new_grid.y, RemoveObject(j, i, collided));
           }
-          printf("Collision Resolved");
+          //printf("Collision Resolved");
         }
         
         //float friction = subject_obj->mass * Default_Gravity.y * subject_obj->friction;
@@ -186,11 +186,11 @@ void Physics::Update_Object()
         {
           AddObject(newGrid.x, newGrid.y, RemoveObject(j, i, subject_obj));
         }
-        printf("\n x: %f, y: %f\n" ,subject_obj->transform.Position.x ,subject_obj->transform.Position.y);
+        //printf("\n x: %f, y: %f\n" ,subject_obj->transform.Position.x ,subject_obj->transform.Position.y);
       }
     }
   }
-  printf("End of Update Function\n");
+  //printf("End of Update Function\n");
 }
 
 
@@ -232,7 +232,7 @@ bool Physics::AddObject(int x_coord, int y_coord, object obj)
   H_Grid grid = &bodies[y_coord][x_coord];
   if (grid->size > grid->max_size - 1)
   {
-    std::cout << "Resizing grid to " << (grid->max_size * 2) << std::endl;
+    //std::cout << "Resizing grid to " << (grid->max_size * 2) << std::endl;
     resize_grid(grid, grid->max_size * 2);
   }
 

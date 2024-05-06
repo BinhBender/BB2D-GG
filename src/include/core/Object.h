@@ -39,25 +39,17 @@ public:
   
   
   Vector2D gravity;
-  float mass;
   Vector2D force;
-
-  float velocity;
-  float acceleration;  
+  float mass;
 
   float friction;
-  float bounce;
-
   float Radius;
-
-  object_type type = sphere;
 
   Sphere();
   Sphere(float);
   ~Sphere();
   void Move();
   Vector2D FuturePosition();
-  
 
   void Scale(Vector2D);
   void Rotate(float);
@@ -65,6 +57,8 @@ public:
 
   void SetForce(Vector2D);
   void AddForce(Vector2D);
+
+  virtual void OnCollision(Sphere*);
 };
 typedef Sphere* H_Sphere;
 

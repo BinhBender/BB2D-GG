@@ -8,7 +8,7 @@
 #include "time.h"
 #include <iostream>
 
-#define PHYSICS_DEBUG
+//#define PHYSICS_DEBUG
 #ifdef PHYSICS_DEBUG
 
 
@@ -16,7 +16,7 @@
 #define PRINT_DECONSTRUCTOR(x, index) std::cout << (index + 1) << ((index % 6 == 5) ? "\n" : ", ");
 #else
 #define PRINT_ALL_DEBUG
-#define PRINT_DECONSTRUCTOR
+#define PRINT_DECONSTRUCTOR(x, index)
 #endif
 
 #define WORLD_SPACE_LIMIT_X 160

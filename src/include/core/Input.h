@@ -1,7 +1,8 @@
 #pragma once 
-#include "../SDL2/SDL.h"
+#include "../SDL2/SDL_keyboard.h"
 #include <cstring>
 #include "debug.h"
+#include <SDL2/SDL.h>
 //#define DEBUG
 
 
