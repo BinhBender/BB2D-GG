@@ -1,5 +1,7 @@
 #include "Physics.h"
 
+
+
 Physics::Physics()
 {
   for (int i = 0; i < GRID_Y; i++)
@@ -21,7 +23,7 @@ Physics::~Physics()
 {
   //deallocates the objects in the grid
   int grid_size = 0;
-  objectArr grid_objects = nullptr;
+  ObjectArray grid_objects = nullptr;
   //std::cout << "Deleting: ";
   for (int i = 0; i < GRID_Y; i++)
   {
@@ -58,7 +60,7 @@ void* Physics::resize_grid(Grid *grid, int max_size)
   if(max_size < grid->max_size) return nullptr;
   
   //Allocate a new array for objects
-  objectArr new_grid_object_container = new object[max_size];
+  ObjectArray new_grid_object_container = new object[max_size];
 
   //Copy the data from the old array to the new one
   memcpy(new_grid_object_container, grid->objects, sizeof(object) * grid->max_size);
@@ -123,10 +125,21 @@ H_Rectangle Physics::rectangle_collision(const H_Grid *other_bodies, H_Rectangle
 {
   return nullptr;
 }
+void Physics::BoundingBox(object obj)
+{
+  Vector2D pos = obj->FuturePosition();
+  if(pos.x > WORLD_SPACE_LIMIT_X || pos.x < 0){
+    obj->AddForce({-2 * obj->force.x, obj->force.y});
+  }
+  if(pos.y> WORLD_SPACE_LIMIT_Y || pos.y < 0){
+    obj->AddForce({obj->force.x, -2 *obj->force.y});
+  } 
+}
 
 /// @brief This function will get the surrounding grid tiles around the specified x and y in a 3x3 (boundaries are safe).
-/// @param x The specified center grid
-/// @param y 
+/// @param x The specified center grid in the x
+/// @param y The specified center grid in the y
+/// @return This will return true as a value and update sub_bodies of the Physics Class
 bool Physics::Get_Surrounding_Grid(int x, int y){
   //Check if arguments are within bounds
   if(x > GRID_X || x < 0) return false;
@@ -152,11 +165,25 @@ bool Physics::Get_Surrounding_Grid(int x, int y){
   return true;
 }
 
+
+void Physics::MoveObject(int x, int y, object obj)
+{
+  obj->Move();
+  
+  //Checks if the object moved to a new grid area or not
+  Vector2D newGrid = {int(obj->transform.Position.x / SPACE_PER_GRID_X), int(obj->transform.Position.y / SPACE_PER_GRID_Y)};
+  if (newGrid != Vector2D{float(x), float(y)})
+    AddObject(newGrid.x, newGrid.y, RemoveObject(x, y, obj));
+
+}
+
+
 /// @brief Main physics loop, should not be called more than once per frame.
 void Physics::Update_Object()
 {
   for(int i = 0; i < GRID_Y; i++){
     for(int j = 0; j < GRID_X; j++){
+
       Get_Surrounding_Grid(j, i); // After this runs, "sub_bodies" updates
       for (int k = 0; k < bodies[i][j].size; k++)
       {
@@ -164,33 +191,18 @@ void Physics::Update_Object()
         //printf("Starting collision detection \n");
         H_Sphere collided = sphere_collision(sub_bodies, subject_obj);
 
-        //printf("Ended collision detection \n");
-
         if (collided != nullptr)
         {
-          //printf("Resolving Collision");
           Resolve_Collision(subject_obj, collided, 0.5);
-          collided->Move();
-          Vector2D collided_new_grid = {int(collided->transform.Position.x / SPACE_PER_GRID_X), int(collided->transform.Position.y / SPACE_PER_GRID_Y)};
-          if (collided_new_grid != Vector2D{float(j), float(i)})
-          {
-            AddObject(collided_new_grid.x, collided_new_grid.y, RemoveObject(j, i, collided));
-          }
-          //printf("Collision Resolved");
+          MoveObject(j, i, collided);
         }
         
-        //float friction = subject_obj->mass * Default_Gravity.y * subject_obj->friction;
-        subject_obj->Move();
-        Vector2D newGrid = { int(subject_obj->transform.Position.x / SPACE_PER_GRID_X), int(subject_obj->transform.Position.y / SPACE_PER_GRID_Y) };
-        if (newGrid != Vector2D{float(j), float(i)})
-        {
-          AddObject(newGrid.x, newGrid.y, RemoveObject(j, i, subject_obj));
-        }
+        float friction = subject_obj->mass * Default_Gravity * subject_obj->friction;
+        MoveObject(j, i, subject_obj);
         //printf("\n x: %f, y: %f\n" ,subject_obj->transform.Position.x ,subject_obj->transform.Position.y);
       }
     }
   }
-  //printf("End of Update Function\n");
 }
 
 

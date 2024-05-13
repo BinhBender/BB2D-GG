@@ -8,6 +8,8 @@ Sphere::Sphere()
   force = Vector2_Zero;
 
   Radius = 1;
+
+  render = {0xffffffff, 2};
 }
 
 Sphere::Sphere(float rad)
@@ -17,6 +19,32 @@ Sphere::Sphere(float rad)
 
   force = Vector2_Zero;
   Radius = rad;
+
+  render = {0xffffffff, 2};
+}
+
+Sphere::Sphere(float Radius, Vector2D Position)
+{
+  gravity = Default_Gravity;
+  mass = Default_Mass;
+
+  force = Vector2_Zero;
+  this->Radius = Radius;
+
+  transform.Position = Position;
+  render = {0xffffffff, 2};
+}
+
+Sphere::Sphere(float Radius, float xPosition, float yPosition)
+{  
+  gravity = Default_Gravity;
+  mass = Default_Mass;
+
+  force = Vector2_Zero;
+  this->Radius = Radius;
+  transform.Position = Vector2D{xPosition, yPosition};
+  render = {0xffffffff, 2};
+
 }
 
 Sphere::~Sphere()
@@ -56,4 +84,9 @@ void Sphere::SetForce(Vector2D f)
 void Sphere::AddForce(Vector2D f)
 {
   force += f;
+}
+
+void Sphere::OnCollision(Sphere *s)
+{
+
 }

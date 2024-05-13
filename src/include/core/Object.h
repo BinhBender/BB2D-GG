@@ -6,7 +6,7 @@
 #include "mesh.h"
 #include "../SDL2/SDL_rect.h"
 
-#define Default_Gravity Vector2D{0, -9.81}
+#define Default_Gravity -9.81
 #define Default_Mass 1
 
 #define _SPHERE
@@ -25,12 +25,6 @@
   #define H_OBJ_TYPE H_Sphere
 #endif
 
-enum object_type{
-  sphere,
-  mesh,
-  rectangle
-};
-
 /// @brief Spherical object using the radius
 class Sphere
 {
@@ -38,22 +32,38 @@ public:
   Transform transform;
   
   
-  Vector2D gravity;
+  float gravity;
   Vector2D force;
   float mass;
 
   float friction;
   float Radius;
+  
+  typedef struct{
+    union{
+      uint32_t raw;
+      uint8_t rgba[4];
+      struct{
+        uint8_t r;
+        uint8_t g;
+        uint8_t b;
+        uint8_t a;
+      };
+    } color;
+    int thickness;
+  } SphereRender;
+  SphereRender render; 
 
   Sphere();
-  Sphere(float);
+  Sphere(float Radius);
+  Sphere(float Radius, Vector2D Position);
+  Sphere(float Radius, float xPosition, float yPosition);
   ~Sphere();
   void Move();
   Vector2D FuturePosition();
 
   void Scale(Vector2D);
   void Rotate(float);
-
 
   void SetForce(Vector2D);
   void AddForce(Vector2D);
@@ -70,14 +80,13 @@ typedef Sphere* H_Sphere;
 class Rectangle{
 public:
   Transform transform;
-  Vector2D gravity;
+  float gravity;
   float mass;
   Vector2D force;
 
   float friction;
   float bounce;
 
-  object_type type = rectangle;
 
   Vector2D width_height;
   void Move();
@@ -102,8 +111,6 @@ class Mesh_OBJ{
   float bounce;
 
   Mesh *Mesh;
-
-  object_type type = mesh;
   void Move();
   void Scale(Vector2D);
   void Rotate(float);

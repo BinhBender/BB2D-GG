@@ -36,7 +36,6 @@ int main(int argc, char *argv[])
   int mouse_y; 
   SDL_GetMouseState(&mouse_x, &mouse_y);
   std::vector<int> indicies = {0, 1, 2, 1, 2, 3};
-  // SDL_Point *points = {SDL_FPoint{500, 500}, SDL_FPoint{570, 700}};
   bool running = true;
   Input* InputHandler = Input::GetInstance();
   println("balls");
@@ -52,42 +51,13 @@ int main(int argc, char *argv[])
           running = false;
           break;
       }
-    }/*
-    if (InputHandler->GetKey(SDL_SCANCODE_W)){
-
-      verts[0].position.y -= 10;
     }
-    if (InputHandler->GetKey(SDL_SCANCODE_D))
-    {
-
-      verts[0].position.x += 10;
-    }
-    if (InputHandler->GetKey(SDL_SCANCODE_S))
-    {
-
-      verts[0].position.y += 10;
-    }
-    if (InputHandler->GetKey(SDL_SCANCODE_A))
-    {
-
-      verts[0].position.x -= 10;
-    }*/
     std::cout << mouse_x << "          " << mouse_y << std::endl;
     SDL_RenderClear(renderer);
     //SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), indicies.data(), indicies.size());
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
 
     SDL_RenderPresent(renderer);
-
-    /*
-    verts[0].position.x += 1;
-       verts[1].position.x += 1;
-        verts[1].position.y += 1;
-        verts[2].position.x += 1;
-        verts[2].position.y += 1;*/
-
-    // SDL_SetWindowPosition(window, x, 200);
-    //SDL_SetWindowSize(window, position.x, position.y);
 
 
     

@@ -5,7 +5,6 @@
 #include "Transform.h"
 #include "Object.h"
 #include "string.h"
-#include "time.h"
 #include <iostream>
 
 //#define PHYSICS_DEBUG
@@ -19,8 +18,8 @@
 #define PRINT_DECONSTRUCTOR(x, index)
 #endif
 
-#define WORLD_SPACE_LIMIT_X 160
-#define WORLD_SPACE_LIMIT_Y 90
+#define WORLD_SPACE_LIMIT_X 1600
+#define WORLD_SPACE_LIMIT_Y 900
 
 #define GRID_X 16 //The amount of grid spaces on the x
 #define GRID_Y 9  //The amount of grid spaces on the y
@@ -41,12 +40,12 @@
 
 
 typedef Sphere* object;
-typedef object* objectArr;
+typedef object* ObjectArray;
 
 
 struct Grid
 {
-  objectArr objects;   // Array of the OBJ_TYPE
+  ObjectArray objects;   // Array of the OBJ_TYPE
   int max_size = 0;      // Max size of the array, Default: 10, doubles everytime it reaches max.
   int size = 0; // Keeps track of the index of the last OBJ_TYPE added.
 };
@@ -69,8 +68,11 @@ private:
   H_Rectangle rectangle_collision(const H_Grid *, H_Rectangle);
 
   void* detect_collision();
-
+  void MoveObject(int,int, object);
   
+
+  //temp bounding box to keep objects inside
+  void BoundingBox(object);
 public:
 
   Physics();

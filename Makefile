@@ -14,7 +14,5 @@ compile:
 object:
 	$(CC) $(INC_PATH) $(LIB_PATH) -c src/include/core/*.cpp -l mingw32 -lSDL2main -lSDL2
 	
-
-
 clean: 
 	rm *.o
