@@ -4,7 +4,7 @@
 #include "Vector2D.h"
 #include "Transform.h"
 #include "mesh.h"
-#include "../SDL2/SDL_rect.h"
+#include <SDL2/SDL_rect.h>
 
 #define Default_Gravity -9.81
 #define Default_Mass 1
@@ -39,16 +39,21 @@ public:
   float friction;
   float Radius;
   
+  
+  #pragma GCC diagnostic ignored "-Wnarrowing"
+  #pragma GCC diagnostic ignored "-Woverflow"
   typedef struct{
     union{
-      uint32_t raw;
-      uint8_t rgba[4];
       struct{
         uint8_t r;
         uint8_t g;
         uint8_t b;
         uint8_t a;
+        
       };
+
+      uint32_t raw;
+      uint8_t rgba[4];
     } color;
     int thickness;
   } SphereRender;

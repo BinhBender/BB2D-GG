@@ -9,7 +9,7 @@ Sphere::Sphere()
 
   Radius = 1;
 
-  render = {0xffffffff, 2};
+  render = {{.raw = 0xffffffff}, 2};
 }
 
 Sphere::Sphere(float rad)
@@ -20,7 +20,7 @@ Sphere::Sphere(float rad)
   force = Vector2_Zero;
   Radius = rad;
 
-  render = {0xffffffff, 2};
+  render = {{.raw = 0xffffffff}, 2};
 }
 
 Sphere::Sphere(float Radius, Vector2D Position)
@@ -32,7 +32,7 @@ Sphere::Sphere(float Radius, Vector2D Position)
   this->Radius = Radius;
 
   transform.Position = Position;
-  render = {0xffffffff, 2};
+  render = {{.raw = 0xffffffff}, 2};
 }
 
 Sphere::Sphere(float Radius, float xPosition, float yPosition)
@@ -43,7 +43,7 @@ Sphere::Sphere(float Radius, float xPosition, float yPosition)
   force = Vector2_Zero;
   this->Radius = Radius;
   transform.Position = Vector2D{xPosition, yPosition};
-  render = {0xffffffff, 2};
+  render = {{.raw = 0xffffffff}, 2};
 
 }
 

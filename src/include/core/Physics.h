@@ -47,7 +47,7 @@ struct Grid
 {
   ObjectArray objects;   // Array of the OBJ_TYPE
   int max_size = 0;      // Max size of the array, Default: 10, doubles everytime it reaches max.
-  int size = 0; // Keeps track of the index of the last OBJ_TYPE added.
+  int size = 0;          // Keeps track of the current size of objects.
 };
 
 typedef Grid* H_Grid;
@@ -55,7 +55,9 @@ class Physics{
 private:
 
 
-  //Dividing the scene into grids for computational efficiency
+  //Dividing the scene into grids to minimize the search of collision
+  // @param Y
+  // @param X
   Grid bodies[GRID_Y][GRID_X];
 
   H_Grid sub_bodies[9] = {nullptr};
@@ -70,6 +72,7 @@ private:
   void* detect_collision();
   void MoveObject(int,int, object);
   
+  bool CheckInputBounds(Vector2D range, Vector2D limit);
 
   //temp bounding box to keep objects inside
   void BoundingBox(object);
@@ -81,12 +84,12 @@ public:
   
   #pragma GCC diagnostic ignored "-Wnarrowing"
   void Update_Object();
-
   void Resolve_Collision(OBJ_TYPE*, OBJ_TYPE*, float);
 
   bool AddObject(int, int, object);
   object RemoveObject(int, int, object);
-
+  
+  const H_Grid* Get_Objects();
   object GetObject(int, int, int);
 
   void PrintGrid(int, int);

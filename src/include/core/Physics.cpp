@@ -46,7 +46,7 @@ Physics::~Physics()
       }
       //Deletes the grid array
       delete[] grid_objects;
-      
+      bodies[i][j].objects = nullptr;
     }
   }
 }
@@ -90,9 +90,9 @@ H_Sphere Physics::sphere_collision(const H_Grid *other_bodies, H_Sphere sph_obj)
   {
     if (other_bodies[i] != nullptr)
     {
-      int max_size = other_bodies[i]->size;
+      int object_count = other_bodies[i]->size;
 
-      for (int j = 0; j < max_size; j++)
+      for (int j = 0; j < object_count; j++)
       {
         Sphere* object_to_check = (Sphere*)(other_bodies[i]->objects[i]);
 
@@ -152,6 +152,8 @@ bool Physics::Get_Surrounding_Grid(int x, int y){
   //Zero out sub_bodies
   memset(sub_bodies, 0, sizeof(Grid *) * 9);
   int grid_counter = 0;
+  
+  //TODO: this can be optimized by doing pointer arithemetic, no need for a nested loop
   // Get the grids that is surrounding the objects
   for (int Grid_y = startGrid.y; Grid_y < endGrid.y; Grid_y++)
   {
@@ -177,6 +179,12 @@ void Physics::MoveObject(int x, int y, object obj)
 
 }
 
+bool Physics::CheckInputBounds(Vector2D range, Vector2D limit)
+{
+  if(range.x > limit.x || range.x < 0) return false;
+  if(range.y > limit.x || range.y < 0) return false;
+  return true;
+}
 
 /// @brief Main physics loop, should not be called more than once per frame.
 void Physics::Update_Object()
@@ -232,17 +240,16 @@ void Physics::Resolve_Collision(OBJ_TYPE *objectA, OBJ_TYPE *objectB, float Forc
 }
 
 /// @brief Given a coordinate point on the grid between the bounds append the object to the end of that grid list
-/// @param x_coord The x coordinate on the grid to add in
-/// @param y_coord The y coordinate on the grid to add in
+/// @param x_index The x coordinate on the grid to add in
+/// @param y_index The y coordinate on the grid to add in
 /// @param obj The object to add 
-bool Physics::AddObject(int x_coord, int y_coord, object obj)
+bool Physics::AddObject(int x_index, int y_index, object obj)
 {
   if(obj == nullptr) return false;
-  if(x_coord > GRID_X - 1) return false;
-  if(y_coord > GRID_Y - 1) return false;
+  if(!CheckInputBounds({x_index,y_index}, {GRID_X - 1, GRID_Y - 1})) return nullptr;
   
-  H_Grid grid = &bodies[y_coord][x_coord];
-  if (grid->size > grid->max_size - 1)
+  H_Grid grid = &bodies[y_index][x_index];
+  if (grid->size > grid->max_size)
   {
     //std::cout << "Resizing grid to " << (grid->max_size * 2) << std::endl;
     resize_grid(grid, grid->max_size * 2);
@@ -255,13 +262,20 @@ bool Physics::AddObject(int x_coord, int y_coord, object obj)
 }
 
 /// @brief Removes an object from a specified grid given the grid coordinate and object address. Note: This does NOT delete the object so it has to be used in conjunction with AddObject and should only be used in order to switch the grids location of the objects
-/// @param x_coord X Coordinate of the grid.
-/// @param y_coord Y Coordinate of the grid.
+/// @param x_index X Coordinate of the grid.
+/// @param y_index Y Coordinate of the grid.
 /// @param obj  Address of the object.
-object Physics::RemoveObject(int x_coord, int y_coord, object obj)
+object Physics::RemoveObject(int x_index, int y_index, object obj)
 {
-  Grid *grid = &bodies[y_coord][x_coord];
-  int grid_size = grid->max_size;
+  
+  if(obj == nullptr) return nullptr;
+  if(!CheckInputBounds({x_index,y_index}, {GRID_X - 1, GRID_Y - 1})) return nullptr;
+
+  Grid *grid = &bodies[y_index][x_index];
+
+  int grid_size = grid->size;
+  int grid_max = grid->max_size;
+
   object returningOBJ = nullptr;
   for (int i = 0; i < grid_size; i++)
   {
@@ -269,14 +283,27 @@ object Physics::RemoveObject(int x_coord, int y_coord, object obj)
       //Remove obj from list
       returningOBJ = grid->objects[i];
       grid->objects[i] = nullptr;
+
       //Shift all objects back
-        //Apparently memcpy/memset is faster due to asm optimization 
-      memcpy(grid->objects + i, grid->objects + i + 1, sizeof(object) * (grid_size - i - 1));
-      memset(grid->objects + grid->size, 0, sizeof(object));
+        //Apparently memcpy/memset is faster due to asm optimization so thats 
+        //what we'll be using
+      memcpy(
+        grid->objects + i, 
+        grid->objects + i + 1, 
+          //if index is at the end, we don't need to check for bounding errors 
+          //since the size of our copy should deal with that
+        sizeof(object) * (grid_size - i - 1)
+      );
+      grid->objects[grid->size - 1] = nullptr;
     }
   }
   grid->size--;
   return returningOBJ;
+}
+
+const Grid* Physics::Get_Objects()
+{
+  return &bodies;
 }
 
 object Physics::GetObject(int y, int x, int index)

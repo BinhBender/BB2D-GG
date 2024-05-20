@@ -1,10 +1,13 @@
 #pragma once
-#include <cmath>
-#include "../SDL2/SDL.h"
+#include <SDL2/SDL.h>
+
 #include "bmath.h"
 #include "Physics.h"
 #include "Object.h"
+
+#include <cmath>
 #include <vector>
+#include <thread>
 #define CAMERA_FPS_30 30
 #define CAMERA_FPS_60 60
 #define CAMERA_FPS_144 144

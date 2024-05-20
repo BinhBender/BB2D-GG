@@ -1,3 +1,17 @@
+/*
+  engine_system.h
+
+  Glues all of the classes together and provides the main loop that addresses the 
+    inputs
+    rendering
+    physics
+  
+  Will not be responsible for deallocating game objects.
+  Will only deallocate SDL processes
+
+
+*/
+
 #pragma once
 #include "Physics.h"
 #include "scene.h"
@@ -6,8 +20,17 @@
 #include "Input.h"
 #include <SDL2/SDL.h>
 #include <thread>
-
+#include <vector>
 #define ES_CONTINUE_RUNNING 1
+
+enum object_type{
+  rigid,
+  nomove
+};
+typedef struct {
+  object_type type;
+  object item;
+}OptionObject;
 class Engine_System{
   //This will be where the loops of the function will go, with the main.cpp holding EVERYTHING together
 private:
@@ -17,13 +40,12 @@ private:
   Camera camera;
   
   //All objects, even ones without physics
-  int RenderCount;
-  ObjectArray RenderObjects;
+  std::vector<OptionObject> RenderObjects;
 
   //Objects in the physics class
   int RigidCount;
-  ObjectArray RigidObjects;
-
+  const Grid* RigidObjects;
+  
   SDL_Window* window;
   SDL_Renderer* renderer;
 
@@ -33,7 +55,9 @@ private:
   
 public:
   int main_loop();
-  
+   
+  bool SpawnObject(H_Sphere);
+  bool DestroyObject(H_Sphere);
 
   Engine_System();
   ~Engine_System();

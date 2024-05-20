@@ -21,7 +21,7 @@ void Time::end_time()
 
 Time* Time::GetInstance()
 {
-    printf("Creating new time object\n");
+  //printf("Creating new time object\n");
   if(instance == nullptr){
     instance = new Time();
 

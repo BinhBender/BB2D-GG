@@ -30,4 +30,11 @@ cam:
 	../src/include/core/Transform.cpp \
 	../src/include/core/Bmath.cpp \
 	../src/include/core/Time.cpp \
+	../src/include/core/Input.cpp \
+	-l mingw32 -l SDL2main -l SDL2
+
+engine:
+	g++ -I ../src/include -L ../src/lib -o test \
+	test_enginesystem.cpp \
+	../src/include/core/*.cpp
 	-l mingw32 -l SDL2main -l SDL2

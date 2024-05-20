@@ -40,10 +40,10 @@ int main(int argv, char** args){
       }
     }
     SDL_GetMouseState(&m.x,&m.y);
-    printf("NORMAL GET x: %u, y: %u\n", m.x, m.y);
-    SDL_GetRelativeMouseState(&m.x,&m.y);
-    printf("RELATIVE x: %u, y: %u\n", m.x, m.y);
-    system("clear");
+    printf("NORMAL GET x: %u, y: %u\r", m.x, m.y);
+    //SDL_GetRelativeMouseState(&m.x,&m.y);
+    //printf("RELATIVE x: %u, y: %u\n", m.x, m.y);
+    //system("clear");
     if (InputHandler->GetKeyDown(SDL_SCANCODE_W)){
       printf("W pressed\n");
     }

@@ -16,7 +16,7 @@ Camera::Camera(SDL_Window * window, SDL_Renderer* renderer)
 void Camera::render(ObjectArray objects, int size)
 {
   // Sets the color that the screen will be cleared with.
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+  SDL_SetRenderDrawColor(renderer, 0X00, 0X00, 0X00, 0XFF);
   SDL_RenderClear(renderer);
   DrawCircles(objects, size);
 
@@ -47,52 +47,40 @@ void Camera::DrawCircles(ObjectArray objects, int size)
 
 void Camera::DrawCircle(SDL_Renderer * renderer, int32_t centreX, int32_t centreY, int32_t radius)
 {
-    std::vector<SDL_Point> points;
-    int count = 0;
-   const int32_t diameter = (radius * 2);
+  int count = 0;
+  const int32_t diameter = (radius * 2);
   
-   int32_t x = (radius - 1);
-   int32_t y = 0;
-   int32_t tx = 1;
-   int32_t ty = 1;
-   int32_t error = (tx - diameter);
+  int32_t x = (radius - 1);
+  int32_t y = 0;
+  int32_t tx = 1;
+  int32_t ty = 1;
+  int32_t error = (tx - diameter);
 
-   while (x >= y)
-   {
-      //  Each of the following renders an octant of the circle
-      /*SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
-      SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
-      SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
-      SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
-      SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
-      SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
-      SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
-      SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
-      */
-      points.push_back({centreX + x, centreY - y});
-      points.push_back({centreX + x, centreY + y});
-      points.push_back({centreX - x, centreY - y});
-      points.push_back({centreX - x, centreY + y});
-      points.push_back({centreX + y, centreY - x});
-      points.push_back({centreX + y, centreY + x});
-      points.push_back({centreX - y, centreY - x});
-      points.push_back({centreX - y, centreY + x});
-      if (error <= 0)
-      {
-         ++y;
-         error += ty;
-         ty += 2;
-      }
-
-      if (error > 0)
-      {
-         --x;
-         tx += 2;
-         error += (tx - diameter);
+  while (x >= y)
+  {
+    //  Each of the following renders an octant of the circle
+     SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
+     SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
+     SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
+     SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
+     SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
+     SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
+     SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
+     SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
+    
+     if (error <= 0)
+     {
+        ++y;
+        error += ty;
+        ty += 2;
+     }
+     if (error > 0)
+     {
+        --x;
+        tx += 2;
+        error += (tx - diameter);
       }
    }
-
-  SDL_RenderDrawPoints(renderer, points.data(), points.size());
 
 }
 
