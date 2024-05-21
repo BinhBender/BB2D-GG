@@ -11,9 +11,13 @@ Physics::Physics()
       bodies[i][j] = {
         new object[DEFAULT_GRID_CONTAINER_SIZE], 
         DEFAULT_GRID_CONTAINER_SIZE, 
-        0 
+        0
       };
-      memset(bodies[i][j].objects,0,sizeof(object) * DEFAULT_GRID_CONTAINER_SIZE);
+      memset(
+        bodies[i][j].objects,
+        0,
+        sizeof(object) * DEFAULT_GRID_CONTAINER_SIZE
+      );
     }
   }
   
@@ -246,12 +250,12 @@ void Physics::Resolve_Collision(OBJ_TYPE *objectA, OBJ_TYPE *objectB, float Forc
 bool Physics::AddObject(int x_index, int y_index, object obj)
 {
   if(obj == nullptr) return false;
-  if(!CheckInputBounds({x_index,y_index}, {GRID_X - 1, GRID_Y - 1})) return nullptr;
+  if(!CheckInputBounds({x_index,y_index}, {GRID_X - 1, GRID_Y - 1})) return false;
   
   H_Grid grid = &bodies[y_index][x_index];
   if (grid->size > grid->max_size)
   {
-    //std::cout << "Resizing grid to " << (grid->max_size * 2) << std::endl;
+    std::cout << "Resizing grid to " << (grid->max_size * 2) << std::endl;
     resize_grid(grid, grid->max_size * 2);
   }
 
@@ -301,9 +305,9 @@ object Physics::RemoveObject(int x_index, int y_index, object obj)
   return returningOBJ;
 }
 
-const Grid* Physics::Get_Objects()
+Grid (* Physics::Get_Objects())[GRID_X]
 {
-  return &bodies;
+  return bodies;
 }
 
 object Physics::GetObject(int y, int x, int index)

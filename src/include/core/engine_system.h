@@ -15,43 +15,33 @@
 #pragma once
 #include "Physics.h"
 #include "scene.h"
-#include "time.h"
+#include "Time.h"
 #include "Camera.h"
 #include "Input.h"
+#include <random>
 #include <SDL2/SDL.h>
 #include <thread>
 #include <vector>
 #define ES_CONTINUE_RUNNING 1
 
-enum object_type{
-  rigid,
-  nomove
-};
-typedef struct {
-  object_type type;
-  object item;
-}OptionObject;
+
 class Engine_System{
-  //This will be where the loops of the function will go, with the main.cpp holding EVERYTHING together
 private:
   Physics physics;
-  Time* time;
+  Time* timeHandler;
   Input* inputHandler;
   Camera camera;
-  
   //All objects, even ones without physics
-  std::vector<OptionObject> RenderObjects;
+  std::vector<object> RenderObjects;
 
   //Objects in the physics class
   int RigidCount;
-  const Grid* RigidObjects;
+  Grid (*RigidObjects)[GRID_X];
   
   SDL_Window* window;
   SDL_Renderer* renderer;
 
   SDL_Event windowEvent;
-
-//  object* StaticObjects;
   
 public:
   int main_loop();

@@ -2,6 +2,7 @@
 #include "../src/include/core/Physics.h"
 #include "../src/include/core/Time.h"
 #include "../src/include/core/Input.h"
+#include "../src/include/core/Object.h"
 #include <SDL2/SDL.h>
 #include <random>
 #include <vector>
@@ -9,13 +10,13 @@
 void CreateObjects(std::vector<object>& arr){
   srand(time(0));
   for(int i = 0; i < 15; i ++){
-    arr.push_back(new Sphere(
+    arr.push_back({new Sphere(
       rand()% 100, 
       Vector2D{
         float(rand() % WORLD_SPACE_LIMIT_X - 100) + 100, 
         float(rand() % WORLD_SPACE_LIMIT_Y - 100) + 100
         }
-      )
+      )}
     );
     arr[i]->render.color.r = uint8_t(rand()%255);
     arr[i]->render.color.g = uint8_t(rand()%255);
@@ -109,7 +110,6 @@ int main(int argv, char** args){
       count++;
     }
 
-    //Input stuff
     input->Update();
 
   }

@@ -5,14 +5,17 @@
 #include <SDL2/SDL.h>
 
 
-int main(){
+int main(int argv, char** args){
   Engine_System engine_System;
   int running = 1;
-  while(running = ES_CONTINUE_RUNNING){
-
+  printf("Starting Main Loop\n");
+  while(running == ES_CONTINUE_RUNNING){
+    
     running = engine_System.main_loop();
 
   }
 
+
+  printf("Finished!\n");
   return 0;
 }

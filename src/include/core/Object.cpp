@@ -4,6 +4,7 @@ Sphere::Sphere()
   
   gravity = Default_Gravity;
   mass = Default_Mass;
+  Active = true;
 
   force = Vector2_Zero;
 
@@ -16,6 +17,7 @@ Sphere::Sphere(float rad)
 {
   gravity = Default_Gravity;
   mass = Default_Mass;
+  Active = true;
 
   force = Vector2_Zero;
   Radius = rad;
@@ -27,6 +29,7 @@ Sphere::Sphere(float Radius, Vector2D Position)
 {
   gravity = Default_Gravity;
   mass = Default_Mass;
+  Active = true;
 
   force = Vector2_Zero;
   this->Radius = Radius;
@@ -39,6 +42,7 @@ Sphere::Sphere(float Radius, float xPosition, float yPosition)
 {  
   gravity = Default_Gravity;
   mass = Default_Mass;
+  Active = true;
 
   force = Vector2_Zero;
   this->Radius = Radius;

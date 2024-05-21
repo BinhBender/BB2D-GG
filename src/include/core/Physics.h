@@ -39,9 +39,6 @@
 // Each grid will have array of pointers to OBJ_TYPE as well as a count for the number of items in the grid
 
 
-typedef Sphere* object;
-typedef object* ObjectArray;
-
 
 struct Grid
 {
@@ -89,7 +86,7 @@ public:
   bool AddObject(int, int, object);
   object RemoveObject(int, int, object);
   
-  const H_Grid* Get_Objects();
+  Grid (*Get_Objects())[GRID_X];
   object GetObject(int, int, int);
 
   void PrintGrid(int, int);

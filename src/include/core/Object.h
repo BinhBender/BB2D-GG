@@ -25,11 +25,20 @@
   #define H_OBJ_TYPE H_Sphere
 #endif
 
+
+
+enum object_type{
+  rigid,
+  nomove
+};
+
 /// @brief Spherical object using the radius
 class Sphere
 {
 public:
+  bool Active;
   Transform transform;
+  object_type type;
   
   
   float gravity;
@@ -76,6 +85,9 @@ public:
   virtual void OnCollision(Sphere*);
 };
 typedef Sphere* H_Sphere;
+
+typedef Sphere* object;
+typedef object* ObjectArray;
 
 
 ///////////////////////////////
