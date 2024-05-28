@@ -4,10 +4,9 @@
 #include "bmath.h"
 #include "Physics.h"
 #include "Object.h"
-
+#include "time.h"
 #include <cmath>
-#include <vector>
-#include <thread>
+
 #define CAMERA_FPS_30 30
 #define CAMERA_FPS_60 60
 #define CAMERA_FPS_144 144
@@ -18,6 +17,7 @@
 
 class Camera{
 private:
+  Time* t;
   int FPS = CAMERA_FPS_60;
   float scaleX;
   float scaleY;

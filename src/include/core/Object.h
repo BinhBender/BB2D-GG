@@ -3,7 +3,8 @@
 #include "bmath.h"
 #include "Vector2D.h"
 #include "Transform.h"
-#include "mesh.h"
+#include "mesh.h" 
+#include <string>
 #include <SDL2/SDL_rect.h>
 
 #define Default_Gravity -9.81
@@ -36,16 +37,17 @@ enum object_type{
 class Sphere
 {
 public:
+  float gravity;
+  float mass;
   bool Active;
-  Transform transform;
+  std::string Name;
+  Vector2D force;
   object_type type;
   
   
-  float gravity;
-  Vector2D force;
-  float mass;
 
   float friction;
+  Transform transform;
   float Radius;
   
   

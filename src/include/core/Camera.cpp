@@ -5,7 +5,8 @@ Camera::Camera(){
   renderer = nullptr;
 
   scaleX = 1;
-  scaleY = 1; 
+  scaleY = 1;
+
 }
 Camera::Camera(SDL_Window * window, SDL_Renderer* renderer)
 {
@@ -25,6 +26,7 @@ void Camera::render(ObjectArray objects, int size)
 
 void Camera::DrawCircles(ObjectArray objects, int size)
 {
+  //printf("Starting Draw\n");
   for(int i = 0; i < size; i++){
   SDL_SetRenderDrawColor(
     renderer, 

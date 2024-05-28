@@ -106,6 +106,7 @@ int main(int argv, char** args){
       printf("FPS: %4.2f | Time delta: %1.6f\n", 1/fps, fps/count);
       count = 0;
       fps = 0;
+      
     }else{
       count++;
     }

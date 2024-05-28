@@ -12,7 +12,7 @@ grid:
 	../src/include/core/Bmath.cpp \
 	../src/include/core/Time.cpp \
 	../src/include/core/Transform.cpp \
-	-l mingw32 -l SDL2main -l SDL2
+	-l mingw32 -l SDL2main -l SDL2 && ./test.exe
 
 time: 
 	g++ -I ../src/include -L ../src/lib -o test test_Time.cpp ../src/include/core/Time.cpp -l mingw32 -l SDL2main -l SDL2
@@ -31,10 +31,10 @@ cam:
 	../src/include/core/Bmath.cpp \
 	../src/include/core/Time.cpp \
 	../src/include/core/Input.cpp \
-	-l mingw32 -l SDL2main -l SDL2
+	-l mingw32 -l SDL2main -l SDL2 && ./test.exe
 
 engine:
 	g++ -I ../src/include -L ../src/lib -o test \
 	test_enginesystem.cpp \
 	../src/include/core/*.cpp \
-	-l mingw32 -l SDL2main -l SDL2
+	-l mingw32 -l SDL2main -l SDL2 

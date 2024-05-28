@@ -3,52 +3,38 @@ Sphere::Sphere()
 {
   
   gravity = Default_Gravity;
+  
   mass = Default_Mass;
+  
   Active = true;
+
+  Name = "";
 
   force = Vector2_Zero;
 
   Radius = 1;
 
+  force = Vector2_Zero;
+  transform.Position = Vector2_Zero;
+
   render = {{.raw = 0xffffffff}, 2};
 }
 
-Sphere::Sphere(float rad)
+Sphere::Sphere(float rad) : Sphere()
 {
-  gravity = Default_Gravity;
-  mass = Default_Mass;
-  Active = true;
-
-  force = Vector2_Zero;
   Radius = rad;
-
-  render = {{.raw = 0xffffffff}, 2};
 }
 
-Sphere::Sphere(float Radius, Vector2D Position)
+Sphere::Sphere(float Radius, Vector2D Position) : Sphere()
 {
-  gravity = Default_Gravity;
-  mass = Default_Mass;
-  Active = true;
-
-  force = Vector2_Zero;
   this->Radius = Radius;
-
   transform.Position = Position;
-  render = {{.raw = 0xffffffff}, 2};
 }
 
-Sphere::Sphere(float Radius, float xPosition, float yPosition)
+Sphere::Sphere(float Radius, float xPosition, float yPosition) : Sphere()
 {  
-  gravity = Default_Gravity;
-  mass = Default_Mass;
-  Active = true;
-
-  force = Vector2_Zero;
   this->Radius = Radius;
   transform.Position = Vector2D{xPosition, yPosition};
-  render = {{.raw = 0xffffffff}, 2};
-
 }
 
 Sphere::~Sphere()

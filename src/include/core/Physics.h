@@ -11,11 +11,11 @@
 #ifdef PHYSICS_DEBUG
 
 
-#define PRINT_ALL_DEBUG std::cout << "Y: " << i << " X: " << j << '\n';
-#define PRINT_DECONSTRUCTOR(x, index) std::cout << (index + 1) << ((index % 6 == 5) ? "\n" : ", ");
+  #define PRINT_ALL_DEBUG std::cout << "Y: " << i << " X: " << j << '\n';
+  #define PRINT_DECONSTRUCTOR(x, index) std::cout << (index + 1) << ((index % 6 == 5) ? "\n" : ", ");
 #else
-#define PRINT_ALL_DEBUG
-#define PRINT_DECONSTRUCTOR(x, index)
+  #define PRINT_ALL_DEBUG
+  #define PRINT_DECONSTRUCTOR(x, index)
 #endif
 
 #define WORLD_SPACE_LIMIT_X 1600
@@ -30,11 +30,11 @@
 #define DEFAULT_GRID_CONTAINER_SIZE 10
 #define MAX_GRID_GROUP_AMOUNT 9
 /*
- | | | | | | |
- | |1|2|3| | |
- | |4|5|6| | |
- | |7|8|9| | |
- | | | | | | |
+ | | | | | | |       | | | | | | |  
+ | |1|2|3| | |       | | | | | | |  
+ | |4|5|6| | |  and  | | | |1|2|3|  
+ | |7|8|9| | |       | | | |4|5|6|  
+ | | | | | | |       | | | |7|8|9|  
 */
 // Each grid will have array of pointers to OBJ_TYPE as well as a count for the number of items in the grid
 
@@ -59,10 +59,10 @@ private:
 
   H_Grid sub_bodies[9] = {nullptr};
 
-
+  H_Grid GetGridFromPosition(Vector2D Position);
   void* resize_grid(Grid*, int);
   bool Get_Surrounding_Grid(int, int);
-  H_Sphere sphere_collision(const H_Grid *, H_Sphere sph_obj);
+  H_Sphere sphere_collision(const H_Grid *,const object sph_obj);
   H_Mesh_OBJ mesh_collision(const H_Grid *, H_Mesh_OBJ);
   H_Rectangle rectangle_collision(const H_Grid *, H_Rectangle);
 
@@ -81,10 +81,11 @@ public:
   
   #pragma GCC diagnostic ignored "-Wnarrowing"
   void Update_Object();
-  void Resolve_Collision(OBJ_TYPE*, OBJ_TYPE*, float);
+  void Resolve_Collision(const object,const object, float);
 
-  bool AddObject(int, int, object);
-  object RemoveObject(int, int, object);
+  SDL_Point FindGridIndex(Vector2D Position);
+  bool AddObject(SDL_Point, object);
+  object RemoveObject(SDL_Point, object);
   
   Grid (*Get_Objects())[GRID_X];
   object GetObject(int, int, int);

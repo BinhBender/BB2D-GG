@@ -60,3 +60,7 @@ bool operator!=(const Vector2D &self, const Vector2D &other)
   return !(self.x && other.x) && (self.y && other.y);
 }
 
+bool operator!=(const SDL_Point &self, const SDL_Point &other)
+{
+  return self.x == other.x && self.y == other.y;
+}
