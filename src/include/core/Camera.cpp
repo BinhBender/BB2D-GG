@@ -26,7 +26,6 @@ void Camera::render(ObjectArray objects, int size)
 
 void Camera::DrawCircles(ObjectArray objects, int size)
 {
-  //printf("Starting Draw\n");
   for(int i = 0; i < size; i++){
   SDL_SetRenderDrawColor(
     renderer, 
@@ -61,27 +60,27 @@ void Camera::DrawCircle(SDL_Renderer * renderer, int32_t centreX, int32_t centre
   while (x >= y)
   {
     //  Each of the following renders an octant of the circle
-     SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
-     SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
-     SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
-     SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
-     SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
-     SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
-     SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
-     SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
-    
-     if (error <= 0)
-     {
-        ++y;
-        error += ty;
-        ty += 2;
-     }
-     if (error > 0)
-     {
-        --x;
-        tx += 2;
-        error += (tx - diameter);
-      }
+    SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
+    SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
+    SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
+    SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
+    SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
+    SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
+    SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
+    SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
+  
+    if (error <= 0)
+    {
+      ++y;
+      error += ty;
+      ty += 2;
+    }
+    if (error > 0)
+    {
+      --x;
+      tx += 2;
+      error += (tx - diameter);
+    }
    }
 
 }
@@ -90,5 +89,5 @@ void Camera::SetScale(float worldLimitX, float worldLimitY)
 {
   scaleX = CAMERA_RESOLUTION_X / worldLimitX;
   scaleY = CAMERA_RESOLUTION_Y / worldLimitY;
-
+  printf("Scale x %f, y %f", scaleX, scaleY);
 }

@@ -18,8 +18,8 @@
   #define PRINT_DECONSTRUCTOR(x, index)
 #endif
 
-#define WORLD_SPACE_LIMIT_X 1600
-#define WORLD_SPACE_LIMIT_Y 900
+#define WORLD_SPACE_LIMIT_X 1280  
+#define WORLD_SPACE_LIMIT_Y 720
 
 #define GRID_X 16 //The amount of grid spaces on the x
 #define GRID_Y 9  //The amount of grid spaces on the y

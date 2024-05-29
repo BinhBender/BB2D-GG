@@ -4,11 +4,11 @@ float Magnitude(Vector2D self){
   return sqrt(self.x * self.x + self.y * self.y);
 }
 float DotProduct(Vector2D self, Vector2D other){
-  return self.x * other.x + self.y * other.y;
+  return (self.x * other.x) + (self.y * other.y);
 }
 
 float Distance(Vector2D self, Vector2D other){
-  return sqrt((self.x - other.x) * (self.x - other.x) + (self.y - other.y) * (self.y - other.y));
+  return sqrt(((self.x - other.x) * (self.x - other.x)) + ((self.y - other.y) * (self.y - other.y)));
 
 }
 

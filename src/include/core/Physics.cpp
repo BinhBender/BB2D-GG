@@ -121,7 +121,7 @@ H_Sphere Physics::sphere_collision(const H_Sphere sph_obj)
         if(object_to_check != sph_obj && object_to_check != nullptr){
           //Distance between the objects
           //printf("Transform of obj: %i, %f, %f \n", j, sph_obj->transform.Position.x, sph_obj->transform.Position.y, sph_obj->transform.Position);
-          float dist = Distance(sph_obj->transform.Position, object_to_check->transform.Position);
+          float dist = Distance(sph_obj->FuturePosition(), object_to_check->FuturePosition());
           //printf("%f\n",dist);
           if ((object_to_check->Radius + sph_obj->Radius > dist) && (closest_distance > dist))
           {
@@ -152,11 +152,11 @@ H_Rectangle Physics::rectangle_collision(const H_Grid *other_bodies, H_Rectangle
 void Physics::BoundingBox(object obj)
 {
   Vector2D pos = obj->FuturePosition();
-  if(pos.x > WORLD_SPACE_LIMIT_X || pos.x < 0){
-    obj->AddForce({-2 * obj->force.x, obj->force.y});
+  if(pos.x + obj->Radius > WORLD_SPACE_LIMIT_X || pos.x - obj->Radius < 0){
+    obj->SetForce({-obj->force.x, obj->force.y});
   }
-  if(pos.y> WORLD_SPACE_LIMIT_Y || pos.y < 0){
-    obj->AddForce({obj->force.x, -2 *obj->force.y});
+  if(pos.y + obj->Radius > WORLD_SPACE_LIMIT_Y || pos.y - obj->Radius< 0){
+    obj->SetForce({obj->force.x, -obj->force.y});
   } 
 }
 
@@ -196,6 +196,7 @@ void Physics::MoveObject(int x, int y, object obj)
 {
   if(obj == nullptr) return;
   //printf("Past Position: x: %f y: %f\n",obj->transform.Position.x, obj->transform.Position.y);
+  BoundingBox(obj);
   obj->Move();  
   //printf("Current Position: x: %f y: %f\n",obj->transform.Position.x, obj->transform.Position.y);
 
@@ -226,10 +227,11 @@ void Physics::Update_Object()
       for (int k = 0; k < bodies[i][j].size; k++)
       {
         object subject_obj = (bodies[i][j].objects[k]);
-        //printf("%p\n",  subject_obj);
-        object collided = nullptr;//sphere_collision(subject_obj);
+        //printf("%i\n",  k);
+        object collided = sphere_collision(subject_obj);
         if (collided != nullptr)
         {
+          //printf("Collision!\n");
           Resolve_Collision(subject_obj, collided, 1);
           MoveObject(j, i, collided);
         }
@@ -252,7 +254,7 @@ Vector2D final_velocity(const object A, const object B)
   float dot = DotProduct(A->force - B->force, pos_diff);
 
   //TODO: change the Magnitude function to its squared equivalent
-  Vector2D final = A->force - (2 * B->mass / (A->mass + B->mass)) * (dot / (Magnitude(pos_diff) * Magnitude(pos_diff))) * pos_diff;
+  Vector2D final = A->force - (2 * B->mass / (A->mass + B->mass)) * (dot / DotProduct(pos_diff, pos_diff)) * pos_diff;
 
   return final;
 }
@@ -261,7 +263,7 @@ Vector2D final_velocity(const object A, const object B)
 /// @param objectB 
 void Physics::Resolve_Collision(const object objectA,const object objectB, float ForceScale)
 {
-  if(objectA->transform.Position == objectB->transform.Position) return;
+  //if(objectA->transform.Position == objectB->transform.Position) return;
   // Since there is "ghosting" of an object in collision, we have to find the positions of the objects AT the moment of collision. Next return the resulting force vector of the collision to both objects
   objectA->SetForce(final_velocity(objectA, objectB) * ForceScale);
   objectB->SetForce(final_velocity(objectB, objectA) * ForceScale);
