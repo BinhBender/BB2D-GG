@@ -29,7 +29,6 @@ Engine_System::Engine_System()
   printf("Started Initialization: Init, window, and renderer\n");
   printf("Finished Initialization: Init, window, and renderer\n");
   printf("Started Initialization: Physics, Time, InputHandler\n");
-  physics = Physics();
   timeHandler = Time::GetInstance();
   inputHandler = Input::GetInstance();
   printf("Finished Initialization: Physics, Time, InputHandler\n");
@@ -46,16 +45,17 @@ Engine_System::Engine_System()
   
   printf("Started Initialization: RenderObjects\n");
   RigidObjects = physics.Get_Objects();
-  printf("Size: %i\n", sizeof(RigidObjects));
   for(int i = 0; i < GRID_Y; i++){
     for(int j = 0; j < GRID_X; j++){
-      printf("x: %i y: %i\n", j, i);
+      //printf("x: %i y: %i\n", j, i);
       for(int k = 0; k < RigidObjects[i][j].size; k++){
-        printf("obj#: %i\n", k);
+        //printf("obj#: %i\n", k);
         RenderObjects.push_back(RigidObjects[i][j].objects[k]);
       }
     }
   }
+  printf("%p\n", RigidObjects);
+  
   printf("Finished Initialization: RenderObjects\n");
   
 }
@@ -79,7 +79,6 @@ int Engine_System::main_loop(){
     printf("W pressed\n");
 
   }
-
   physics.Update_Object();
   camera.render(RenderObjects.data(), RenderObjects.size());
 
@@ -92,9 +91,9 @@ int Engine_System::main_loop(){
 
 int Engine_System::init()
 {
-  object s = new Sphere(10, {400, 534});
+  object s = new Sphere(10, {0, 0});
   s->Name = std::string("Hello");
-  printf("%s\n",s->Name );
+  printf("%s\n",s->Name.c_str() );
   SpawnObject(s);
   return 0;
 }

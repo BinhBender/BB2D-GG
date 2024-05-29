@@ -1,6 +1,6 @@
 #include "Physics.h"
 
-
+int Physics::count = 0;
 
 Physics::Physics()
 {
@@ -16,6 +16,7 @@ Physics::Physics()
       memset(bodies[i][j].objects, 0, DEFAULT_GRID_CONTAINER_SIZE);
     }
   }
+  printf("%p\n", &bodies);
   
 }
 
@@ -91,7 +92,7 @@ void* Physics::resize_grid(Grid *grid, int new_max_size)
 /// @param other_bodies 
 /// @param sph_obj 
 /// @return 
-H_Sphere Physics::sphere_collision(const H_Grid *other_bodies,const H_Sphere sph_obj)
+H_Sphere Physics::sphere_collision(const H_Sphere sph_obj)
 {
   //Set the closest distance to infinite because we assume that 
   float closest_distance = INFINITY;
@@ -99,14 +100,14 @@ H_Sphere Physics::sphere_collision(const H_Grid *other_bodies,const H_Sphere sph
   H_Sphere collided = nullptr;
   for (int i = 0; i < MAX_GRID_GROUP_AMOUNT; i++)
   {
-    if (other_bodies[i] != nullptr)
+    if (sub_bodies[i] != nullptr)
     {
-      int object_count = other_bodies[i]->size;
+      int object_count = sub_bodies[i]->size;
       //printf("Finding sphere\n");
       for (int j = 0; j < object_count; j++)
       {
         //printf("%i\n", j);
-        Sphere* object_to_check = (Sphere*)(other_bodies[i]->objects[j]);
+        Sphere* object_to_check = (Sphere*)(sub_bodies[i]->objects[j]);
         if(object_to_check != sph_obj && object_to_check != nullptr){
           //Distance between the objects
           //printf("Transform of obj: %i, %f, %f \n", j, sph_obj->transform.Position.x, sph_obj->transform.Position.y, sph_obj->transform.Position);
@@ -207,34 +208,25 @@ bool Physics::CheckInputBounds(Vector2D target, Vector2D limit)
 /// @brief Main physics loop, should not be called more than once per frame.
 void Physics::Update_Object()
 {
+  count++;
   for(int i = 0; i < GRID_Y; i++){
     for(int j = 0; j < GRID_X; j++){
 
       Get_Surrounding_Grid(j, i); // After this runs, "sub_bodies" updates
-      //printf("Starting object collision test on grid x: %i,y: %i\n",j, i);
       for (int k = 0; k < bodies[i][j].size; k++)
       {
-        //printf("Size: %i\n", bodies[i][j].size);
         object subject_obj = (bodies[i][j].objects[k]);
-        //printf("%p, %p, %i\n", subject_obj, bodies[i][j].objects, k);
-        //printf("Starting collision detection \n");
-        object collided = sphere_collision(sub_bodies, subject_obj);
-        //printf("Finished collision detection \n");
-
+        //printf("%p\n",  subject_obj);
+        object collided = nullptr;//sphere_collision(subject_obj);
         if (collided != nullptr)
         {
-          //printf("Found Collision\n");
-          //printf("Subj x:%4.2f y:%4.2f\n",subject_obj->transform.Position.x, subject_obj->transform.Position.y);
-          //printf("coll x:%4.2f y:%4.2f\n",collided->transform.Position.x, collided->transform.Position.y);
           Resolve_Collision(subject_obj, collided, 1);
           MoveObject(j, i, collided);
         }
         
         float friction = subject_obj->mass * Default_Gravity * subject_obj->friction;
-        //printf("%p, %p, %i\n", subject_obj, bodies[i][j].objects, k);
-        //printf("x: %i,y: %i\n", j, i);
+        //printf("%p, %i\n",subject_obj,  count);
         MoveObject(j, i, subject_obj);
-        // printf("\n x: %f, y: %f\n" ,subject_obj->transform.Position.x ,subject_obj->transform.Position.y);
       }
     }
   }

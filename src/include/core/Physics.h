@@ -62,7 +62,7 @@ private:
   H_Grid GetGridFromPosition(Vector2D Position);
   void* resize_grid(Grid*, int);
   bool Get_Surrounding_Grid(int, int);
-  H_Sphere sphere_collision(const H_Grid *,const object sph_obj);
+  H_Sphere sphere_collision(const object sph_obj);
   H_Mesh_OBJ mesh_collision(const H_Grid *, H_Mesh_OBJ);
   H_Rectangle rectangle_collision(const H_Grid *, H_Rectangle);
 
@@ -73,6 +73,7 @@ private:
 
   //temp bounding box to keep objects inside
   void BoundingBox(object);
+  static int count;
 public:
 
   Physics();
