@@ -1,6 +1,7 @@
 #include "Physics.h"
 
 int Physics::count = 0;
+Physics* Physics::instance = nullptr;
 
 Physics::Physics()
 {
@@ -50,6 +51,15 @@ Physics::~Physics()
       bodies[i][j].objects = nullptr;
     }
   }
+}
+
+Physics *Physics::GetInstance()
+{
+  if(instance == nullptr){
+    instance = new Physics();
+
+  }
+  return instance;
 }
 
 SDL_Point Physics::FindGridIndex(Vector2D Position)

@@ -74,11 +74,13 @@ private:
   //temp bounding box to keep objects inside
   void BoundingBox(object);
   static int count;
+
+  static Physics* instance;
 public:
 
   Physics();
   ~Physics();
-
+  static Physics* GetInstance();
   
   #pragma GCC diagnostic ignored "-Wnarrowing"
   void Update_Object();

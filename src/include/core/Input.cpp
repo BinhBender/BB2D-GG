@@ -34,13 +34,13 @@ void Input::Update()
 /// @return Pointer of the input handler
 Input* Input::GetInstance()
 {
-  if(instance!=NULL){
-    return instance;
-  }else{
+  if(instance == nullptr){
     instance = new Input();
-    Input_PRINT_INSTANCE_ADDRESS
-    return instance;
+    
   }
+  Input_PRINT_INSTANCE_ADDRESS
+  return instance;
+  
 }
 
 /// @brief Returns true or false based on if its been pressed or not
