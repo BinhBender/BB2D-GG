@@ -62,7 +62,7 @@ int main(){
 
   }
   t->end_time();                                                                                                                          
-  printf("Time to create %u spheres: %fs\n",NUMOFSPHERES, t->deltaTimhe);
+  printf("Time to create %u spheres: %fs\n",NUMOFSPHERES, t->deltaTime);
 
   double totaltime = 0;
   for(int i = 0; i < 200; i++){

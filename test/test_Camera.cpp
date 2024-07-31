@@ -7,17 +7,19 @@
 #include <random>
 #include <vector>
 
+
+#define SCREEN_X 1280
+#define SCREEN_Y 720
 void CreateObjects(std::vector<object>& arr){
   srand(time(0));
-  for(int i = 0; i < 15; i ++){
-    arr.push_back({new Sphere(
+  for(int i = 0; i < arr.size(); i ++){
+    arr[i] = {new Sphere(
       rand()% 100, 
       Vector2D{
         float(rand() % WORLD_SPACE_LIMIT_X - 100) + 100, 
         float(rand() % WORLD_SPACE_LIMIT_Y - 100) + 100
         }
-      )}
-    );
+    )};
     arr[i]->render.color.r = uint8_t(rand()%255);
     arr[i]->render.color.g = uint8_t(rand()%255);
     arr[i]->render.color.b = uint8_t(rand()%255);
@@ -38,17 +40,20 @@ void DeleteObjects(std::vector<object>& arr){
 int main(int argv, char** args){
   
   SDL_Init(SDL_INIT_EVERYTHING);
-  SDL_Window *window = SDL_CreateWindow("Camera Test", 200, 200, CAMERA_RESOLUTION_X, CAMERA_RESOLUTION_Y, SDL_WINDOW_ALLOW_HIGHDPI);
+  SDL_Window *window = SDL_CreateWindow("Camera Test", 200, 200, SCREEN_X, SCREEN_Y, SDL_WINDOW_RESIZABLE );
   SDL_Renderer* renderer = SDL_CreateRenderer(
     window, 
     -1, 
-    SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    SDL_RENDERER_ACCELERATED
   );
 
   Time* t = Time::GetInstance();
   Input* input = Input::GetInstance();
   Camera cam = Camera(window, renderer);
+  cam.RESOLUTION_X = SCREEN_X;
+  cam.RESOLUTION_Y = SCREEN_Y;
   std::vector<object> objectarr;
+  objectarr.resize(15);
   CreateObjects(objectarr);
   cam.SetScale(WORLD_SPACE_LIMIT_X, WORLD_SPACE_LIMIT_Y);
   
@@ -81,6 +86,10 @@ int main(int argv, char** args){
     if(input->GetKeyDown(SDL_SCANCODE_E)){
       forcex += 1;
     }
+    if(input->GetKeyDown(SDL_SCANCODE_R)){
+      
+      CreateObjects(objectarr);
+    }
     for(int i = 1; i < objectarr.size(); i++){
 
       if(objectarr[i]->transform.Position.x > WORLD_SPACE_LIMIT_X || objectarr[i]->transform.Position.x < 0){
@@ -91,8 +100,8 @@ int main(int argv, char** args){
     
     //Silly circle on mouse
     SDL_GetMouseState(&x, &y);
-    objectarr[0]->transform.Position.x = x * float(WORLD_SPACE_LIMIT_X)/CAMERA_RESOLUTION_X;
-    objectarr[0]->transform.Position.y = y * float(WORLD_SPACE_LIMIT_Y)/CAMERA_RESOLUTION_Y;
+    objectarr[14]->transform.Position.x = x * float(WORLD_SPACE_LIMIT_X)/float(SCREEN_X);
+    objectarr[0]->transform.Position.y = y * float(WORLD_SPACE_LIMIT_Y)/float(SCREEN_Y);
     
     
     t->start_time();

@@ -10,7 +10,7 @@ int main(int argv, char** args){
 
   SDL_Init(SDL_INIT_EVERYTHING);
   SDL_Window *window = SDL_CreateWindow("Camera Test", 200, 200, 1280, 780, SDL_WINDOW_ALLOW_HIGHDPI);
-  SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
   if (NULL == window)
   { 

@@ -1,40 +1,56 @@
+CXX = g++
+CXXFLAGS = -I../src/include -L ../src/lib
+LIBS = -l mingw32 -l SDL2main -l SDL2
+DEST = -o test
+
+PHYSICS  = ../src/include/core/Physics.cpp
+VECTOR2D = ../src/include/core/Vector2D.cpp
+OBJECT   = ../src/include/core/Object.cpp
+BMATH    = ../src/include/core/Bmath.cpp
+TIME     = ../src/include/core/Time.cpp
+TRANSFORM= ../src/include/core/Transform.cpp
+INPUT    = ../src/include/core/Input.cpp
+CAMERA   = ../src/include/core/Camera.cpp
+
+ALLFILES = ../src/include/core/*.cpp
+
+
 all:
-	g++ -I ../src/include -L ../src/lib -o test test.cpp -l mingw32 -l SDL2main -l SDL2
-	g++ -I ../src/include -L ../src/lib -o test_PhysicsGrid test_PhysicsGrid.cpp ../src/include/core/Physics.cpp -l mingw32 -l SDL2main -l SDL2
+	$(CXX) $(CXXFLAGS) $(DEST) test_PhysicsGrid.cpp $(PHYSICS) $(LIBS)
 
 grid:
 	
-	g++ -I ../src/include -L ../src/lib -o test \
+	$(CXX) $(CXXFLAGS) $(DEST) \
 	test_PhysicsGrid.cpp \
-	../src/include/core/Physics.cpp \
-	../src/include/core/Vector2D.cpp \
-	../src/include/core/Object.cpp \
-	../src/include/core/Bmath.cpp \
-	../src/include/core/Time.cpp \
-	../src/include/core/Transform.cpp \
-	-l mingw32 -l SDL2main -l SDL2 && ./test.exe
+	$(PHYSICS) \
+	$(VECTOR2D) \
+	$(OBJECT) \
+	$(BMATH) \
+	$(TIME) \
+	$(TRANSFORM)\
+	$(LIBS)
 
 time: 
-	g++ -I ../src/include -L ../src/lib -o test test_Time.cpp ../src/include/core/Time.cpp -l mingw32 -l SDL2main -l SDL2
+	$(CXX) $(CXXFLAGS) $(DEST) test_Time.cpp $(TIME) $(LIBS)
 
 input:
-	g++ -I ../src/include -L ../src/lib -L ../. -o test test_input.cpp ../src/include/core/Input.cpp -l mingw32 -l SDL2main -l SDL2
+	$(CXX) $(CXXFLAGS) $(DEST) test_input.cpp $(INPUT) $(LIBS)
 
 cam:	
-	g++ -I ../src/include -L ../src/lib -o test \
+	$(CXX) $(CXXFLAGS) $(DEST) \
 	test_Camera.cpp \
-	../src/include/core/Camera.cpp \
-	../src/include/core/Vector2D.cpp \
-	../src/include/core/Physics.cpp \
-	../src/include/core/Object.cpp \
-	../src/include/core/Transform.cpp \
-	../src/include/core/Bmath.cpp \
-	../src/include/core/Time.cpp \
-	../src/include/core/Input.cpp \
-	-l mingw32 -l SDL2main -l SDL2
+	$(CAMERA) \
+	$(VECTOR2D) \
+	$(PHYSICS) \
+	$(OBJECT) \
+	$(TRANSFORM)\
+	$(BMATH) \
+	$(TIME) \
+	$(INPUT) \
+	$(LIBS)
 
 engine:
-	g++ -I ../src/include -L ../src/lib -o test \
+	$(CXX) $(CXXFLAGS) $(DEST) \
 	test_enginesystem.cpp \
 	../src/include/core/*.cpp \
-	-l mingw32 -l SDL2main -l SDL2 
+	$(LIBS) 
