@@ -6,7 +6,8 @@
 #include <SDL2/SDL.h>
 #include <random>
 #include <vector>
-
+#define SCREEN_X 1280
+#define SCREEN_Y 720
 void CreateObjects(std::vector<object>& arr){
   srand(time(0));
   for(int i = 0; i < 15; i ++){
@@ -38,11 +39,11 @@ void DeleteObjects(std::vector<object>& arr){
 int main(int argv, char** args){
   
   SDL_Init(SDL_INIT_EVERYTHING);
-  SDL_Window *window = SDL_CreateWindow("Camera Test", 200, 200, CAMERA_RESOLUTION_X, CAMERA_RESOLUTION_Y, SDL_WINDOW_ALLOW_HIGHDPI);
+  SDL_Window *window = SDL_CreateWindow("Camera Test", 200, 200, SCREEN_X, SCREEN_Y, SDL_WINDOW_ALLOW_HIGHDPI);
   SDL_Renderer* renderer = SDL_CreateRenderer(
     window, 
     -1, 
-    SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    SDL_RENDERER_ACCELERATED 
   );
 
   Time* t = Time::GetInstance();
@@ -91,8 +92,8 @@ int main(int argv, char** args){
     
     //Silly circle on mouse
     SDL_GetMouseState(&x, &y);
-    objectarr[0]->transform.Position.x = x * float(WORLD_SPACE_LIMIT_X)/CAMERA_RESOLUTION_X;
-    objectarr[0]->transform.Position.y = y * float(WORLD_SPACE_LIMIT_Y)/CAMERA_RESOLUTION_Y;
+    objectarr[0]->transform.Position.x = x * float(WORLD_SPACE_LIMIT_X)/SCREEN_X;
+    objectarr[0]->transform.Position.y = y * float(WORLD_SPACE_LIMIT_Y)/SCREEN_Y;
     
     
     t->start_time();
