@@ -1,7 +1,7 @@
 #include "Vector2D.h"
 
 float Magnitude(Vector2D self){
-  return sqrt(self.x * self.x + self.y * self.y);
+  return sqrt((self.x * self.x) + (self.y * self.y));
 }
 float DotProduct(Vector2D self, Vector2D other){
   return (self.x * other.x) + (self.y * other.y);
@@ -12,8 +12,13 @@ float Distance(Vector2D self, Vector2D other){
 
 }
 
-Vector2D Normalize(Vector2D self){
+Vector2D Normalize(const Vector2D& self){
   return self / Magnitude(self);
+}
+
+Vector2D Midpoint(Vector2D &self, Vector2D &other)
+{
+  return (self + other) / 2;
 }
 
 Vector2D operator+(const Vector2D &self, const Vector2D &other)

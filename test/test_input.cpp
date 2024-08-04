@@ -1,4 +1,4 @@
-#include "../src/include/core/Input.h"
+#include <core/Input.h>
 #include <cstdio>
 
 struct{

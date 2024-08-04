@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -I../src/include -L ../src/lib
-LIBS = -l mingw32 -l SDL2main -l SDL2
+LIBS = -l mingw32 -l box2d -l SDL2main -l SDL2 
 DEST = -o test
 
 PHYSICS  = ../src/include/core/Physics.cpp
@@ -11,24 +11,20 @@ TIME     = ../src/include/core/Time.cpp
 TRANSFORM= ../src/include/core/Transform.cpp
 INPUT    = ../src/include/core/Input.cpp
 CAMERA   = ../src/include/core/Camera.cpp
-
+CONTACT	 = ../src/include/core/ContactListener.cpp
 ALLFILES = ../src/include/core/*.cpp
 
-
-all:
-	$(CXX) $(CXXFLAGS) $(DEST) test_PhysicsGrid.cpp $(PHYSICS) $(LIBS)
-
-grid:
+phy:
 	
 	$(CXX) $(CXXFLAGS) $(DEST) \
-	test_PhysicsGrid.cpp \
-	$(PHYSICS) \
+	test_Physics.cpp \
 	$(VECTOR2D) \
+	$(PHYSICS) \
 	$(OBJECT) \
 	$(BMATH) \
-	$(TIME) \
-	$(TRANSFORM) \
-	$(LIBS)
+	$(CONTACT) \
+	$(LIBS) \
+
 
 time: 
 	$(CXX) $(CXXFLAGS) $(DEST) test_Time.cpp $(TIME) $(LIBS)
@@ -41,7 +37,6 @@ cam:
 	test_Camera.cpp \
 	$(CAMERA) \
 	$(VECTOR2D) \
-	$(PHYSICS) \
 	$(OBJECT) \
 	$(TRANSFORM) \
 	$(BMATH) \

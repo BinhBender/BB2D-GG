@@ -3,8 +3,6 @@
 #include <cstring>
 #include "debug.h"
 #include <SDL2/SDL.h>
-//#define DEBUG
-
 
 class Input{
 private:

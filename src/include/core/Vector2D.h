@@ -8,12 +8,13 @@ typedef SDL_FPoint Vector2D;
 float Magnitude(Vector2D);
 float DotProduct(Vector2D, Vector2D);
 float Distance(Vector2D, Vector2D);
-Vector2D Normalize(Vector2D self);
+Vector2D Midpoint(Vector2D&, Vector2D&);
+Vector2D Normalize(const Vector2D& self);
 
-#define Vector2_Zero {0,  0}
-#define Vector2_Up   {0,  1}
-#define Vector2_Down {0, -1}
-#define Vector2_One  {1,  1}
+#define Vector2_Zero Vector2D{0,  0}
+#define Vector2_Up   Vector2D{0,  1}
+#define Vector2_Down Vector2D{0, -1}
+#define Vector2_One  Vector2D{1,  1}
 
 void Rotate(float);
 

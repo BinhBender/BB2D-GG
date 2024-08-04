@@ -1,57 +1,75 @@
-#include "../src/include/core/Camera.h"
-#include "../src/include/core/Physics.h"
-#include "../src/include/core/Time.h"
-#include "../src/include/core/Input.h"
-#include "../src/include/core/Object.h"
+#include <core/Camera.h>
+#include <core/Physics.h>
+#include <core/Time.h>
+#include <core/Input.h>
+#include <core/Object.h>
+#include <core/Vector2D.h>
 #include <SDL2/SDL.h>
 #include <random>
 #include <vector>
+
 #define SCREEN_X 1280
 #define SCREEN_Y 720
-void CreateObjects(std::vector<object>& arr){
+
+
+
+void CreateObjects(std::vector<Object>& arr){
   srand(time(0));
   for(int i = 0; i < 15; i ++){
-    arr.push_back({new Sphere(
-      rand()% 100, 
-      Vector2D{
-        float(rand() % WORLD_SPACE_LIMIT_X - 100) + 100, 
-        float(rand() % WORLD_SPACE_LIMIT_Y - 100) + 100
-        }
-      )}
+    Vector2D newPos = Vector2D{
+      float(rand() % WORLD_SPACE_LIMIT_X - 100) + 100, 
+      float(rand() % WORLD_SPACE_LIMIT_Y - 100) + 100
+    };
+
+    b2CircleShape circle;
+    circle.m_radius = 20.0f;
+    Object newobj(circle, newPos);
+    arr.push_back(newobj);
+
+    arr[i].SetColor(
+      uint8_t(rand()%255),
+      uint8_t(rand()%255),
+      uint8_t(rand()%255),
+      255
     );
-    arr[i]->render.color.r = uint8_t(rand()%255);
-    arr[i]->render.color.g = uint8_t(rand()%255);
-    arr[i]->render.color.b = uint8_t(rand()%255);
-    arr[i]->render.color.a = 255;
-
     
-    printf("x: %3.2f y: %3.2f\n", arr[i]->transform.Position.x, arr[i]->transform.Position.y);
+    printf("x: %3.2f y: %3.2f\n", arr[i].GetPosition().x, arr[i].GetPosition().y);
   
-    printf("Radius:%3.2f\n", arr[i]->Radius);
+    printf("Radius:%3.2f\n", arr[i].GetShape().m_radius);
   }
 }
-void DeleteObjects(std::vector<object>& arr){
-  for(int i = 0; i < arr.size(); i ++){
-    delete arr[i];  
-  }
-}
+void SDL2Init(SDL_Renderer*& renderer, SDL_Window*& window){
 
-int main(int argv, char** args){
-  
   SDL_Init(SDL_INIT_EVERYTHING);
-  SDL_Window *window = SDL_CreateWindow("Camera Test", 200, 200, SCREEN_X, SCREEN_Y, SDL_WINDOW_ALLOW_HIGHDPI);
-  SDL_Renderer* renderer = SDL_CreateRenderer(
+
+  window = SDL_CreateWindow(
+    "Camera Test", 
+    200, 200,   //Starting Position x,y
+    SCREEN_X, SCREEN_Y, //Screen Size x,y
+    SDL_WINDOW_ALLOW_HIGHDPI
+    );
+
+  renderer = SDL_CreateRenderer(
     window, 
     -1, 
     SDL_RENDERER_ACCELERATED 
   );
+}
+int main(int argv, char** args){
+
+  SDL_Window* window;
+  SDL_Renderer* renderer;
+  SDL2Init(renderer, window);
 
   Time* t = Time::GetInstance();
   Input* input = Input::GetInstance();
   Camera cam = Camera(window, renderer);
-  std::vector<object> objectarr;
-  CreateObjects(objectarr);
   cam.SetScale(WORLD_SPACE_LIMIT_X, WORLD_SPACE_LIMIT_Y);
+
+
+  std::vector<Object> objectarr;
+
+  CreateObjects(objectarr);
   
   int count = 0;
   int forcex = 1;
@@ -84,16 +102,16 @@ int main(int argv, char** args){
     }
     for(int i = 1; i < objectarr.size(); i++){
 
-      if(objectarr[i]->transform.Position.x > WORLD_SPACE_LIMIT_X || objectarr[i]->transform.Position.x < 0){
+      if(objectarr[i].GetPosition().x > WORLD_SPACE_LIMIT_X || objectarr[i].GetPosition().x < 0){
         forcex = -forcex;
       }
-      objectarr[i]->transform.Position.x += forcex;
+      objectarr[i].ApplyForce(forcex);
     }
     
     //Silly circle on mouse
     SDL_GetMouseState(&x, &y);
-    objectarr[0]->transform.Position.x = x * float(WORLD_SPACE_LIMIT_X)/SCREEN_X;
-    objectarr[0]->transform.Position.y = y * float(WORLD_SPACE_LIMIT_Y)/SCREEN_Y;
+    Vector2D mousePos = {x * float(WORLD_SPACE_LIMIT_X)/SCREEN_X, y * float(WORLD_SPACE_LIMIT_Y)/SCREEN_Y};
+    objectarr[0].SetPosition(mousePos); 
     
     
     t->start_time();
@@ -116,7 +134,6 @@ int main(int argv, char** args){
 
   }
   printf("End Render\n");
-  DeleteObjects(objectarr);
 
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);

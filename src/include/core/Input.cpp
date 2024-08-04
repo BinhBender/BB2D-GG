@@ -26,7 +26,6 @@ Input::~Input(){
 /// @brief COPYING the array so that we can cross reference it with a future keyboard state
 void Input::Update()
 {
-  //We have to call this function every frame.
   std::memcpy(instance->KEYBOARD_STATE_HISTORY, instance->KEYBOARDSTATE, instance->numkeys);
 }
 

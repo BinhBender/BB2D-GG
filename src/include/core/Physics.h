@@ -2,80 +2,48 @@
 
 #include "Bmath.h"
 #include "Vector2D.h"
-#include "Transform.h"
 #include "Object.h"
-#include "string.h"
+#include <string.h>
+#include <box2d/box2d.h>
 #include <iostream>
+#include <vector>
+#include <memory>
 
-//#define PHYSICS_DEBUG
-#ifdef PHYSICS_DEBUG
-
-
-  #define PRINT_ALL_DEBUG std::cout << "Y: " << i << " X: " << j << '\n';
-  #define PRINT_DECONSTRUCTOR(x, index) std::cout << (index + 1) << ((index % 6 == 5) ? "\n" : ", ");
-#else
-  #define PRINT_ALL_DEBUG
-  #define PRINT_DECONSTRUCTOR(x, index)
-#endif
+#include "ContactLIstener.h"
 
 #define WORLD_SPACE_LIMIT_X 1280  
 #define WORLD_SPACE_LIMIT_Y 720
 
-#define GRID_X 16 //The amount of grid spaces on the x
-#define GRID_Y 9  //The amount of grid spaces on the y
-
-#define SPACE_PER_GRID_X WORLD_SPACE_LIMIT_X / GRID_X
-#define SPACE_PER_GRID_Y WORLD_SPACE_LIMIT_Y / GRID_Y
-
-#define DEFAULT_GRID_CONTAINER_SIZE 10
-#define MAX_GRID_GROUP_AMOUNT 9
-/*
- | | | | | | |       | | | | | | |  
- | |1|2|3| | |       | | | | | | |  
- | |4|5|6| | |  and  | | | |1|2|3|  
- | |7|8|9| | |       | | | |4|5|6|  
- | | | | | | |       | | | |7|8|9|  
-*/
 // Each grid will have array of pointers to OBJ_TYPE as well as a count for the number of items in the grid
 
 
-
-struct Grid
-{
-  ObjectArray objects;   // Array of the OBJ_TYPE
-  int max_size = 0;      // Max size of the array, Default: 10, doubles everytime it reaches max.
-  int size = 0;          // Keeps track of the current size of objects.
-};
-
-typedef Grid* H_Grid;
+#define ASSERT(_check, ...) if(!(_check)){ (void)fprintf(stderr, __VA_ARGS__); exit(1);}
+#define ASSERTR(_check, _exit, ...) if(!(_check)){ (void)fprintf(stderr, __VA_ARGS__); return _exit;}
 class Physics{
 private:
+  b2Vec2 gravity;
 
+  b2BodyDef      dynamicbodydef;
+  b2BodyDef      staticbodydef;
+  b2FixtureDef   defaultFixtureDef;
+  b2CircleShape  primitiveCircle;
+  b2PolygonShape primitiveRect;
 
-  //Dividing the scene into grids to minimize the search of collision
-  // @param Y
-  // @param X
-  Grid bodies[GRID_Y][GRID_X];
+  MyContactListener ContactListenerInstance;
 
-  H_Grid sub_bodies[9] = {nullptr};
+  b2World* world;
+  float timeStep;
 
-  H_Grid GetGridFromPosition(Vector2D Position);
-  void* resize_grid(Grid*, int);
-  bool Get_Surrounding_Grid(int, int);
-  H_Sphere sphere_collision(const object sph_obj);
-  H_Mesh_OBJ mesh_collision(const H_Grid *, H_Mesh_OBJ);
-  H_Rectangle rectangle_collision(const H_Grid *, H_Rectangle);
-
-  void* detect_collision();
-  void MoveObject(int,int, object);
+  uint32_t velocityIterations = 6;
+  uint32_t positionIteration = 2;
   
-  bool CheckInputBounds(Vector2D range, Vector2D limit);
+  void bodyDefInit();
+  void fixtureDefInit();
+  void circleShapeInit();
+  void rectShapeInit();
+  void polygonShapeInit();
 
-  //temp bounding box to keep objects inside
-  void BoundingBox(object);
-  static int count;
-
-  static Physics* instance;
+  std::vector<Object*> PhysicalObjects;
 public:
 
   Physics();
@@ -84,17 +52,37 @@ public:
   
   #pragma GCC diagnostic ignored "-Wnarrowing"
   void Update_Object();
-  void Resolve_Collision(const object,const object, float);
 
-  SDL_Point FindGridIndex(Vector2D Position);
-  bool AddObject(SDL_Point, object);
-  object RemoveObject(SDL_Point, object);
-  
-  Grid (*Get_Objects())[GRID_X];
-  object GetObject(int, int, int);
+  /// @brief Creates a dynamic circle object based on the defined primitive circle shape and body definition
+  /// @param pos Center position
+  /// @param rad The radius
+  /// @return A pointer to the object created, nullptr if inputs are invalid.
+  Object* CreateCircle(Vector2D pos, float rad);
 
-  void PrintGrid(int, int);
+  /// @brief Creates a dynamic rectangle object based on the polygonShape class on the heap.
+  /// @param pos Center position
+  /// @param wh Width and Height
+  /// @return A pointer to the object created, nullptr if inputs are invalid.
+  Object* CreateRect(Vector2D pos, Vector2D wh);
+
+  /// @brief Creates a static edge given two points
+  /// @param pointA The starting point.
+  /// @param pointB The ending point.
+  /// @return A pointer to the object created, nullptr if inputs are invalid.
+  Object* CreateEdge(Vector2D pointA, Vector2D pointB);
+
+  /// @brief Creates a polygon based on a given array of points
+  /// @param pos Center position
+  /// @param points List of Vector2D points
+  /// @param size Length of List
+  /// @return A pointer to the object created, nullptr if inputs are invalid.
+  Object* CreatePolygon(Vector2D pos, b2Vec2* points, size_t size);
   
-  void PrintGridAll();
+  Object* RemoveObject(Object* obj);
+  
+  void SetTimeStep(float ts);
+  float GetTimeStep();
+
+
 };
 
