@@ -46,20 +46,17 @@ Physics::Physics()
 
 Physics::~Physics()
 {
-  //Deletes all the bodies
-  b2Body* body = world->GetBodyList();
-  while(body != nullptr){
-    b2Body* dummy = body;
-    body = body->GetNext();
-    world->DestroyBody(dummy);
+  for (size_t i = 0; i < PhysicalObjects.size(); i++)
+  {
+    delete PhysicalObjects[i];
   }
-
+  
   delete world;
 }
 
+
 void Physics::Update_Object()
 {
-  ASSERTR(timeStep >= 0, , "TimeStep is negative\n");
   this->world->Step(timeStep, velocityIterations, positionIteration);
 }
 
@@ -68,22 +65,24 @@ Object* Physics::CreateCircle(Vector2D _pos, float _rad)
   ASSERTR(_rad > 0, nullptr,"Radius input is negative\n");
 
 //Make body from body definition
-  dynamicbodydef.position = b2Vec2(_pos.x, _pos.y);
+  dynamicbodydef.position.Set(_pos.x, _pos.y);
   b2Body* newCircleBody = world->CreateBody(&dynamicbodydef);
-  dynamicbodydef.position.SetZero();
 
 //Modify primitive shapes according to input
   primitiveCircle.m_radius = _rad;
 
 //Make fixture definition from default fixture
-  b2FixtureDef newfixturedef = defaultFixtureDef;
+  b2FixtureDef newfixturedef;
 //Bind shape from fixture def to primitive shape
+  newfixturedef.friction = 0.3f;
+  newfixturedef.density = 1.0f;
   newfixturedef.shape = &primitiveCircle;
 
 //Create fixture object from fixture definition and apply it to newObject fixture
   Object* newObject = new Object(newCircleBody->CreateFixture(&newfixturedef));
   
   PhysicalObjects.push_back(newObject);
+  circleShapeInit();
   return newObject;
 }
 
@@ -92,7 +91,7 @@ Object* Physics::CreateRect(Vector2D _pos, Vector2D _wh)
   ASSERTR(_wh.x > 0 && _wh.y > 0, nullptr, "W/H input contains a negative\n");
 
 //Make body from body definition
-  dynamicbodydef.position = b2Vec2(_pos.x, _pos.y);
+  dynamicbodydef.position.Set(_pos.x, _pos.y);
   b2Body* newRectBody = world->CreateBody(&dynamicbodydef);
   dynamicbodydef.position.SetZero();
   
@@ -114,14 +113,14 @@ Object* Physics::CreateRect(Vector2D _pos, Vector2D _wh)
 
 Object* Physics::CreateEdge(Vector2D _pointA, Vector2D _pointB)
 {
-  ASSERTR(Distance(_pointA, _pointB) == 0, nullptr, "Edges are on the same point\n");
+  ASSERTR(Distance(_pointA, _pointB) != 0, nullptr, "Edges are on the same point %f\n", Distance(_pointA, _pointB));
 //Since fixtures are relative to the body, we find the real position of the midpoint
   Vector2D midpoint = Midpoint(_pointA, _pointB);
   _pointA = _pointA - midpoint;
   _pointB = _pointB - midpoint;
 
 //Make body from body definition
-  staticbodydef.position = b2Vec2(midpoint.x, midpoint.y);
+  staticbodydef.position.Set(midpoint.x, midpoint.y);
   b2Body* edgebody = world->CreateBody(&staticbodydef);
   staticbodydef.position.SetZero();
   
@@ -132,7 +131,9 @@ Object* Physics::CreateEdge(Vector2D _pointA, Vector2D _pointB)
   edge.SetTwoSided(start, end);
 
 //Make fixture definition from default fixture
-  b2FixtureDef newfixturedef = defaultFixtureDef;
+  b2FixtureDef newfixturedef;
+  newfixturedef.friction = 0.3f;
+  newfixturedef.density = 1.0f;
   newfixturedef.shape = &edge;
 
 //Create fixture object from fixture definition and apply it to newObject fixture
@@ -145,6 +146,7 @@ Object* Physics::CreateEdge(Vector2D _pointA, Vector2D _pointB)
 Object* Physics::CreatePolygon(Vector2D _pos, b2Vec2 *_points, size_t _size)
 {
   ASSERTR(_points == nullptr, nullptr, "Provided points is nullptr\n");
+  ASSERTR(_size > 3, nullptr, "Provided size is less than 3\n");
 //Make body from body definition
   dynamicbodydef.position = b2Vec2(_pos.x, _pos.y);
   b2Body* polygonbody = world->CreateBody(&dynamicbodydef);
@@ -184,5 +186,5 @@ void Physics::SetTimeStep(float _timestep)
 
 float Physics::GetTimeStep()
 {
-  return 0.0f;
+  return timeStep;
 }

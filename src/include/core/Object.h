@@ -49,8 +49,10 @@ union{
   };
   virtual void OnCollision(b2Contact* _collision);
   virtual void OnCollisionEnd(b2Contact* _collision);
+  void SetFixture(b2Fixture* _fixture);
   void SetTexture(SDL_Texture* _texture);
   SDL_Texture* GetTexture();
+  Vector2D GetPosition();
 
   friend class Physics;
 

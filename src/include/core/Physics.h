@@ -18,7 +18,7 @@
 
 
 #define ASSERT(_check, ...) if(!(_check)){ (void)fprintf(stderr, __VA_ARGS__); exit(1);}
-#define ASSERTR(_check, _exit, ...) if(!(_check)){ (void)fprintf(stderr, __VA_ARGS__); return _exit;}
+#define ASSERTR(_check, _return, ...) if(!(_check)){ (void)fprintf(stderr, __VA_ARGS__); return _return;}
 class Physics{
 private:
   b2Vec2 gravity;
@@ -26,6 +26,7 @@ private:
   b2BodyDef      dynamicbodydef;
   b2BodyDef      staticbodydef;
   b2FixtureDef   defaultFixtureDef;
+  
   b2CircleShape  primitiveCircle;
   b2PolygonShape primitiveRect;
 
@@ -34,8 +35,8 @@ private:
   b2World* world;
   float timeStep;
 
-  uint32_t velocityIterations = 6;
-  uint32_t positionIteration = 2;
+  const uint32_t velocityIterations = 6;
+  const uint32_t positionIteration = 2;
   
   void bodyDefInit();
   void fixtureDefInit();
@@ -48,9 +49,14 @@ public:
 
   Physics();
   ~Physics();
-  static Physics* GetInstance();
+  
+  inline std::vector<Object*>* GetObjectList()
+  {
+    return &PhysicalObjects;
+  }
   
   #pragma GCC diagnostic ignored "-Wnarrowing"
+  /// @brief Runs the box2d world step function
   void Update_Object();
 
   /// @brief Creates a dynamic circle object based on the defined primitive circle shape and body definition
