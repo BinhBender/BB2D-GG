@@ -60,31 +60,36 @@ public:
   void Update_Object();
 
   /// @brief Creates a dynamic circle object based on the defined primitive circle shape and body definition
-  /// @param pos Center position
-  /// @param rad The radius
+  /// @param _pos Center position
+  /// @param _rad The radius
   /// @return A pointer to the object created, nullptr if inputs are invalid.
-  Object* CreateCircle(Vector2D pos, float rad);
+  Object* CreateCircle(Vector2D _pos, float _rad);
 
   /// @brief Creates a dynamic rectangle object based on the polygonShape class on the heap.
-  /// @param pos Center position
-  /// @param wh Width and Height
+  /// @param _pos Center position.
+  /// @param wh Width and Height.
   /// @return A pointer to the object created, nullptr if inputs are invalid.
-  Object* CreateRect(Vector2D pos, Vector2D wh);
+  Object* CreateRect(Vector2D _pos, Vector2D _wh);
 
-  /// @brief Creates a static edge given two points
-  /// @param pointA The starting point.
-  /// @param pointB The ending point.
+  /// @brief Creates a static edge given two points.
+  /// @param _pointA The starting point.
+  /// @param _pointB The ending point.
   /// @return A pointer to the object created, nullptr if inputs are invalid.
-  Object* CreateEdge(Vector2D pointA, Vector2D pointB);
+  Object* CreateEdge(Vector2D _pointA, Vector2D _pointB);
 
-  /// @brief Creates a polygon based on a given array of points
-  /// @param pos Center position
-  /// @param points List of Vector2D points
-  /// @param size Length of List
+  /// @brief Creates a polygon based on a given array of points.
+  /// @param _pos Center position.
+  /// @param _points List of Vector2D points.
+  /// @param _size Length of List.
   /// @return A pointer to the object created, nullptr if inputs are invalid.
-  Object* CreatePolygon(Vector2D pos, b2Vec2* points, size_t size);
-  
-  Object* RemoveObject(Object* obj);
+  Object* CreatePolygon(Vector2D _pos, b2Vec2* _points, size_t _size);
+
+  /// @brief Creates a box from edges given the position and width and height.
+  /// @param _position The center of the border.
+  /// @param _wh The length from the center of the box.
+  void SetBorders(Vector2D _position, Vector2D _wh);
+
+  Object* RemoveObject(Object* _obj);
   
   void SetTimeStep(float ts);
   float GetTimeStep();

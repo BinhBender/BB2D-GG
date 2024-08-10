@@ -35,11 +35,12 @@ inline void Object::SetFixture(b2Fixture *_fixture)
 {
   this->fixture = _fixture;
   fixture->GetBody()->GetUserData().pointer = uintptr_t(this);
+  type  = fixture->GetType();
+  shape = fixture->GetShape();
 }
 
-Vector2D Object::GetPosition()
+SDL_Texture *Object::GetTexture()
 {
-  
-  b2Vec2 pos = fixture->GetBody()->GetPosition();
-  return Vector2D{pos.x, pos.y};
+  return texture;
 }
+

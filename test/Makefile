@@ -35,13 +35,14 @@ input:
 cam:	
 	$(CXX) $(CXXFLAGS) $(DEST) \
 	test_Camera.cpp \
-	$(CAMERA) \
-	$(VECTOR2D) \
 	$(OBJECT) \
+	$(VECTOR2D) \
+	$(CAMERA) \
 	$(TRANSFORM) \
 	$(BMATH) \
 	$(TIME) \
 	$(INPUT) \
+	$(CONTACT) \
 	$(LIBS)
 
 engine:

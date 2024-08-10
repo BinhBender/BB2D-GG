@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <box2d/b2_math.h>
 #include "../SDL2/SDL_rect.h"
 
 typedef SDL_FPoint Vector2D;
@@ -35,3 +36,7 @@ bool operator!=(const Vector2D& self, const Vector2D& other);
 
 //Extension for SDL_Point
 bool operator!=(const SDL_Point& self, const SDL_Point& other);
+
+Vector2D operator+(const Vector2D &self, const b2Vec2 &other);
+Vector2D operator+(const b2Vec2 &other, const Vector2D &self);
+Vector2D operator-(const Vector2D &self, const b2Vec2 &other);

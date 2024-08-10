@@ -27,6 +27,11 @@ public:
   ~Object();
   std::string name;
   int id;
+
+  b2Shape* shape;
+  b2Shape::Type type;
+  
+
   SDL_Texture* texture;
   #pragma GCC diagnostic ignored "-Wnarrowing"
   #pragma GCC diagnostic ignored "-Woverflow"
@@ -44,15 +49,37 @@ union{
     uint8_t blue;
     uint8_t alpha;
   };
-  uint32_t raw;
-  uint8_t rgba[4];
+    uint32_t raw;
+    uint8_t rgba[4];
+    SDL_Color color;
   };
   virtual void OnCollision(b2Contact* _collision);
   virtual void OnCollisionEnd(b2Contact* _collision);
+
   void SetFixture(b2Fixture* _fixture);
+  b2Fixture* GetFixture()
+  {
+  return fixture;
+  }
+
   void SetTexture(SDL_Texture* _texture);
   SDL_Texture* GetTexture();
-  Vector2D GetPosition();
+
+  Vector2D GetPosition()
+  {
+  
+    b2Vec2 pos = fixture->GetBody()->GetPosition();
+    return Vector2D{pos.x, pos.y};
+  }
+  Vector2D GetForce()
+  {
+    b2Vec2 force = fixture->GetBody()->GetLinearVelocity();
+    return {force.x, force.y};
+  }
+
+  b2Shape::Type GetType() {return type;}
+  b2Shape* GetShape() {return shape;}
+  
 
   friend class Physics;
 

@@ -73,9 +73,9 @@ Object* Physics::CreateCircle(Vector2D _pos, float _rad)
 
 //Make fixture definition from default fixture
   b2FixtureDef newfixturedef;
-//Bind shape from fixture def to primitive shape
   newfixturedef.friction = 0.3f;
   newfixturedef.density = 1.0f;
+//Bind shape from fixture def to primitive shape
   newfixturedef.shape = &primitiveCircle;
 
 //Create fixture object from fixture definition and apply it to newObject fixture
@@ -99,7 +99,9 @@ Object* Physics::CreateRect(Vector2D _pos, Vector2D _wh)
   primitiveRect.SetAsBox(_wh.x, _wh.y);
 
 //Make fixture definition from default fixture
-  b2FixtureDef newfixturedef = defaultFixtureDef;
+  b2FixtureDef newfixturedef;
+  newfixturedef.friction = 0.3f;
+  newfixturedef.density = 1.0f;
 
 //Bind shape from fixture def to primitive shape
   newfixturedef.shape = &primitiveRect;
@@ -131,9 +133,7 @@ Object* Physics::CreateEdge(Vector2D _pointA, Vector2D _pointB)
   edge.SetTwoSided(start, end);
 
 //Make fixture definition from default fixture
-  b2FixtureDef newfixturedef;
-  newfixturedef.friction = 0.3f;
-  newfixturedef.density = 1.0f;
+  b2FixtureDef newfixturedef = defaultFixtureDef;
   newfixturedef.shape = &edge;
 
 //Create fixture object from fixture definition and apply it to newObject fixture
@@ -146,7 +146,7 @@ Object* Physics::CreateEdge(Vector2D _pointA, Vector2D _pointB)
 Object* Physics::CreatePolygon(Vector2D _pos, b2Vec2 *_points, size_t _size)
 {
   ASSERTR(_points == nullptr, nullptr, "Provided points is nullptr\n");
-  ASSERTR(_size > 3, nullptr, "Provided size is less than 3\n");
+  ASSERTR(_size > 2, nullptr, "Provided size is less than 2\n");
 //Make body from body definition
   dynamicbodydef.position = b2Vec2(_pos.x, _pos.y);
   b2Body* polygonbody = world->CreateBody(&dynamicbodydef);
@@ -167,7 +167,19 @@ Object* Physics::CreatePolygon(Vector2D _pos, b2Vec2 *_points, size_t _size)
 
   return newPolygon;
 }
-Object* Physics::RemoveObject(Object* _obj)
+void Physics::SetBorders(Vector2D _position, Vector2D _wh)
+{
+  Vector2D v1 = {_position.x - _wh.x, _position.y - _wh.y};
+  Vector2D v2 = {_position.x - _wh.x, _position.y + _wh.y};
+  Vector2D v3 = {_position.x + _wh.x, _position.y + _wh.y};
+  Vector2D v4 = {_position.x + _wh.x, _position.y - _wh.y};
+  CreateEdge(v1, v2);
+  CreateEdge(v2, v3);
+  CreateEdge(v3, v4);
+  CreateEdge(v4, v1);
+
+}
+Object *Physics::RemoveObject(Object *_obj)
 {
 
   

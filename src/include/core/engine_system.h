@@ -35,7 +35,7 @@ private:
   Input*  _inputHandler;
   Camera*  _camera;
   //All objects, even ones without physics
-  std::vector<b2Body> RenderObjects;
+  std::vector<b2Body>* RenderObjects;
 
   //Objects in the physics class
   

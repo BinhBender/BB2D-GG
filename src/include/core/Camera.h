@@ -19,17 +19,20 @@ class Camera{
 private:
   Time* t;
   int FPS = CAMERA_FPS_60;
-  float scaleX;
-  float scaleY;
+  float scale;
 
+  //Can support up to 8 vertices
+  int defaultConvexPolygonIndicies[b2_maxPolygonVertices * 3];
   SDL_Texture* defaultCircleFilled;
 
   SDL_Window* window;
   SDL_Renderer* renderer;
 
   SDL_Texture* create_circle_texture(int diameter);
+  void init();
 public:
   
+  Vector2D position;
   int RESOLUTION_X;
   int RESOLUTION_Y;
 
@@ -37,18 +40,72 @@ public:
   Camera(SDL_Window*, SDL_Renderer*);
   ~Camera();
 
-  void render(Object* list, size_t size);
+  void render(Object** list, size_t size);
 
-  void DrawForces(Object* list, size_t size);
+  void DrawForces(Object** list, size_t size);
+  void DrawObjects(Object** list, size_t size);
 
-  void DrawCircle(SDL_Renderer * renderer,const Object& obj);
-  void DrawCircles(Object*, int count);
+  /// @brief Draws a rasterized outline of a circle, slower than filled using world coordinates.
+  /// @param _position pointer to the object
+  /// @param _radius A pointer to the object
+  void DrawCircle(const Vector2D _position, const float _radius, const SDL_Color);
+//  void DrawCircles(Object** List, int count);
 
-  void DrawCircleFilled(SDL_Renderer* renderer,const Object& obj);
-  void DrawCirclesFilled(Object*, size_t size);
+  /// @brief Draws a circle based on a preset circle texture using world coordinates.
+  /// @param _position pointer to the object
+  /// @param _radius A pointer to the object
+  void DrawCircleFilled(const Vector2D _position, const float _radius, const SDL_Color);
+//  void DrawCirclesFilled(Object**, size_t size);
 
-  void SetScale(float, float);
+  /// @brief The center of the camera in world space
+  /// @return Vector2D of the center in world space
+  inline Vector2D GetCenter(){
+    Vector2D center = position - GetResolution()/2;
+    center.x = -center.x;
+    return center;
+  }
+
+  /// @brief Draws an edge/line from point A to point B using world coordinates.
+  /// @param _pointA Vector2D of point A
+  /// @param _pointB Vector2D of point B
+  void DrawEdge(Vector2D _pointA, Vector2D _pointB, const SDL_Color);
+
+
+  /// @brief 
+  /// @param _pos 
+  /// @param wh 
+  void DrawRectangle(Vector2D _pos, Vector2D wh, const SDL_Color);
+
+  /// @brief Draws a polygon based on the given verticies using world coordinates. Only supports convex polygons.
+  /// @param verticies Array of vertices 
+  /// @param count Amount of points
+  void DrawPolygon(const SDL_Vertex* vertices, const size_t count, const SDL_Color);
+
+  void SetScale(float);
 
   void SetFPS(int);
-  void SetFOV(int);
+
+  inline Vector2D ScreenSpaceToWorldSpace(Vector2D _screenposition){
+
+    // Adjust screen position by subtracting the camera's position
+    _screenposition -= Vector2D{RESOLUTION_X / 2.0f, RESOLUTION_Y / 2.0f};
+
+    // Apply the camera's scale (zoom)
+    _screenposition = _screenposition / scale;
+
+    // Invert the y-axis to convert from screen space to world space
+    _screenposition.y = -_screenposition.y;
+
+    // Adjust by the camera's world position
+    _screenposition += GetCenter();
+
+    return _screenposition;
+  }
+
+  inline Vector2D WorldSpaceToScreenSpace(Vector2D _worldposition){
+    Vector2D offset = GetCenter();
+    return {(_worldposition.x - offset.x) * scale + (RESOLUTION_X/2),((_worldposition.y - offset.y) * -scale) + (RESOLUTION_Y/2)};
+  }
+
+  Vector2D GetResolution();
 };
