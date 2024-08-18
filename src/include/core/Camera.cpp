@@ -11,8 +11,8 @@ Camera::Camera()
 }
 Camera::Camera(SDL_Window * window, SDL_Renderer* renderer)
 {
-  ASSERT(window != nullptr, "Window is nullptr\n");  
-  ASSERT(renderer != nullptr, "Renderer is nullptr\n");
+  ASSERT(window != nullptr, "Window is nullptr, Error: %s\n", SDL_GetError());  
+  ASSERT(renderer != nullptr, "Renderer is nullptr, Error: %s\n", SDL_GetError());
 
   this->defaultCircleFilled = nullptr;
   this->window = window;
@@ -39,9 +39,8 @@ SDL_Texture* Camera::create_circle_texture(int diameter)
   );
 
 
-  uint32_t radius = diameter / 2;
+  float radius = float(diameter) / 2.0f;
   Vector2D center = {radius, radius};
-
   uint32_t pixels[diameter * diameter];
   //Goes through the x and y on the square plane and checks if the coordinate
   //  is out of the radius
@@ -56,15 +55,24 @@ SDL_Texture* Camera::create_circle_texture(int diameter)
 
   return texture;
 }
+void Camera::update_Resolution()
+{
+  Vector2D rs = GetResolution();
+  RESOLUTION_X = rs.x;
+  RESOLUTION_Y = rs.y;
+}
 void Camera::init()
 {
+  //The order of convex polygon indicies are all the same
   for(size_t i = 0; i < b2_maxPolygonVertices; i++){
     defaultConvexPolygonIndicies[i*3] = 0;
     defaultConvexPolygonIndicies[i*3 + 1] = i + 1;
     defaultConvexPolygonIndicies[i*3 + 2] = i + 2; 
   }
   
-  defaultCircleFilled = create_circle_texture(10);
+  //A higher diameter will result in a higher resolution
+  //Position of rendered circle gets more inaccurate the lower the resolution
+  defaultCircleFilled = create_circle_texture(100);
 }
 void Camera::render(Object **list, size_t size)
 {
@@ -73,7 +81,7 @@ void Camera::render(Object **list, size_t size)
   SDL_SetRenderDrawColor(renderer, 0X00, 0X00, 0X00, 0XFF);
   SDL_RenderClear(renderer);
   DrawObjects(list, size);
-  DrawForces(list, size);
+  //DrawForces(list, size);
   SDL_RenderPresent(renderer);
 }
 void Camera::DrawForces(Object** objects, size_t size){
@@ -89,13 +97,15 @@ void Camera::DrawForces(Object** objects, size_t size){
 }
 void Camera::DrawObjects(Object **list, size_t size)
 {
+  //printf("drawobjects\n");
   for(size_t i = 0; i < size; i++){
     b2Body* body = list[i]->GetFixture()->GetBody();
     Vector2D bodyPosition = {body->GetPosition().x, body->GetPosition().y};
 
     switch(list[i]->type){
       case b2Shape::Type::e_circle:
-        {
+        { 
+        //printf("drawing circle");
         //Recasting the shape pointer as an edge shape to access radius
         b2CircleShape* circle = static_cast<b2CircleShape*>(list[i]->GetShape());
         DrawCircleFilled(circle->m_p + bodyPosition, circle->m_radius, list[i]->color);
@@ -211,7 +221,7 @@ void Camera::DrawCircleFilled(const Vector2D _position, const float _radius, con
     _radius * 2 * scale
   };
   
-  ASSERT(SDL_RenderCopy(renderer, defaultCircleFilled, NULL, &dst) == 0, "%s", SDL_GetError());
+  ASSERT(SDL_RenderCopy(renderer, defaultCircleFilled, NULL, &dst) == 0, "Draw Circle Error: %s", SDL_GetError());
 }
 
 

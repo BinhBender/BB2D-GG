@@ -35,7 +35,10 @@ inline void Physics::polygonShapeInit()
 Physics::Physics()
 {
   gravity = b2Vec2(0.0f, -10.0f);
+  //gravity.SetZero();
   world = new b2World(gravity);
+
+  SetTimeStep(1.0f/60.0f);
 
   world->SetContactListener(&ContactListenerInstance);
   bodyDefInit();
@@ -181,10 +184,9 @@ void Physics::SetBorders(Vector2D _position, Vector2D _wh)
 }
 Object *Physics::RemoveObject(Object *_obj)
 {
-
-  
+//Pretty sure this also destroys the fixtures
   world->DestroyBody(_obj->fixture->GetBody());
-
+  
   return _obj;
 }
 

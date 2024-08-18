@@ -9,7 +9,7 @@
 //These definitions exist in case I'm ever too lazy 
 #define RAD(x) x * PI / 180.0f
 #define DEG(x) x * 180.0f / PI
-
+#define LERP(A,B,T) A + (t * (B - A))
 
 /// @brief Converts a degree value into a radian
 /// @param float Degree Value

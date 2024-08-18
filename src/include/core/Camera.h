@@ -29,7 +29,9 @@ private:
   SDL_Renderer* renderer;
 
   SDL_Texture* create_circle_texture(int diameter);
+  void update_Resolution();
   void init();
+
 public:
   
   Vector2D position;
@@ -85,27 +87,20 @@ public:
 
   void SetFPS(int);
 
-  inline Vector2D ScreenSpaceToWorldSpace(Vector2D _screenposition){
+  inline Vector2D ScreenSpaceToWorldSpace(Vector2D _screenPosition){
 
-    // Adjust screen position by subtracting the camera's position
-    _screenposition -= Vector2D{RESOLUTION_X / 2.0f, RESOLUTION_Y / 2.0f};
-
-    // Apply the camera's scale (zoom)
-    _screenposition = _screenposition / scale;
-
-    // Invert the y-axis to convert from screen space to world space
-    _screenposition.y = -_screenposition.y;
-
-    // Adjust by the camera's world position
-    _screenposition += GetCenter();
-
-    return _screenposition;
+    Vector2D offset = GetCenter();
+    return {
+      ((_screenPosition.x - (RESOLUTION_X / 2)) / scale) + offset.x,
+      ((_screenPosition.y - (RESOLUTION_Y / 2)) / -scale) + offset.y
+    };
   }
 
-  inline Vector2D WorldSpaceToScreenSpace(Vector2D _worldposition){
+  inline Vector2D WorldSpaceToScreenSpace(Vector2D _worldPosition){
     Vector2D offset = GetCenter();
-    return {(_worldposition.x - offset.x) * scale + (RESOLUTION_X/2),((_worldposition.y - offset.y) * -scale) + (RESOLUTION_Y/2)};
+    return {(_worldPosition.x - offset.x) * scale + (RESOLUTION_X/2),((_worldPosition.y - offset.y) * -scale) + (RESOLUTION_Y/2)};
   }
 
   Vector2D GetResolution();
+  
 };

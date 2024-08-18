@@ -8,8 +8,8 @@
 #include <random>
 #include <vector>
 
-#define SCREEN_X 1920
-#define SCREEN_Y 1080
+#define SCREEN_X 1280
+#define SCREEN_Y 720
 
 #define AMOUNT 45
 typedef struct {
@@ -138,13 +138,14 @@ void SDL2Init(SDL_Renderer*& renderer, SDL_Window*& window){
     "Camera Test", 
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,   //Starting Position x,y
     SCREEN_X, SCREEN_Y, //Screen Size x,y
-    SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_BORDERLESS
+    SDL_WINDOW_ALLOW_HIGHDPI 
   );
-
+  SDL_SetWindowMaximumSize(window, 1920, 1080);
+  SDL_SetWindowMinimumSize(window, 1280, 720);
   renderer = SDL_CreateRenderer(
     window, 
     -1, 
-    SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC  
+    SDL_RENDERER_ACCELERATED
   );
 }
 
@@ -181,6 +182,7 @@ int main(int argv, char** args){
   int y = 0;
   
   float scale = 1;
+  bool jimmys = true;
   while(running){
     //Check Events
     if (SDL_PollEvent(&windowEvent))
@@ -207,35 +209,40 @@ int main(int argv, char** args){
     if(input->GetKeyDown(SDL_SCANCODE_ESCAPE)) running = false;
     
     if(input->GetKey(SDL_SCANCODE_R)){
-      scale *= 0.9f;
+      scale *= 1.0f - (0.1f * 50 * t->deltaTime);
     }
     
     if(input->GetKey(SDL_SCANCODE_F)){
-      scale *= 1.1f;
+      scale *= 1.0f +  (0.1f * 50 * t->deltaTime);
+    }
+    if(input->GetKeyDown(SDL_SCANCODE_F11)){
+      jimmys ? SDL_MaximizeWindow(window) : SDL_MinimizeWindow(window);
+      cam.GetResolution();
+      jimmys = -jimmys;
     }
     cam.SetScale(scale);
-
-    cam.position += Vector2D{input->GetKey(SDL_SCANCODE_A) - input->GetKey(SDL_SCANCODE_D),input->GetKey(SDL_SCANCODE_W) - input->GetKey(SDL_SCANCODE_S)} * 5;
+    
+    cam.position += Vector2D{input->GetKey(SDL_SCANCODE_A) - input->GetKey(SDL_SCANCODE_D),input->GetKey(SDL_SCANCODE_W) - input->GetKey(SDL_SCANCODE_S)} * 100 * t->deltaTime / scale;
     //Silly circle on mouse
     SDL_GetMouseState(&x, &y);
     Vector2D mousePos = {x, y};
-    CircleArr[AMOUNT-1].pos = cam.ScreenSpaceToWorldSpace(mousePos);
+    //CircleArr[AMOUNT-1].pos = cam.ScreenSpaceToWorldSpace(mousePos);
 //Render start
     t->start_time();
     SDL_SetRenderDrawColor(renderer, 0X00, 0X00, 0X00, 0XFF);
     SDL_RenderClear(renderer);
     for(auto& r : RectArr){
       
-      //cam.DrawRectangle(r.pos, r.wh, r.rgba);
+      cam.DrawRectangle(r.pos, r.wh, r.rgba);
     }
     //Draw Circles
     for(int i = 0; i < CircleArr.size(); i++){
       
-      //cam.DrawCircleFilled(CircleArr[i].pos, CircleArr[i].rad, CircleArr[i].rgba);
+      cam.DrawCircleFilled(CircleArr[i].pos, CircleArr[i].rad, CircleArr[i].rgba);
 
     }
     for(auto& p : PolyArr){
-      cam.DrawPolygon(p.vertices, 6, p.rgba);
+      //cam.DrawPolygon(p.vertices, 6, p.rgba);
     }
     SDL_Color color{0xff, 0xff, 0xff, SDL_ALPHA_OPAQUE};
     SDL_Color color2{0x11, 0x11, 0x11, 100}; 

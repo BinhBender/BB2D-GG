@@ -30,34 +30,54 @@
 
 class Engine_System{
 private:
-  Physics _physics;
+  Physics* _physics;
+  Camera*  _camera;
   Time*   _timeHandler;
   Input*  _inputHandler;
-  Camera*  _camera;
-  //All objects, even ones without physics
-  std::vector<b2Body>* RenderObjects;
 
-  //Objects in the physics class
-  
-  //Camera Resolution
-  int _resolutionX;
-  int _resolutionY;
-
-  void box2Dinit();
-
-  Engine_System();
-
-
-  
-public:
-  int main_loop();
-  int init();
-  SDL_Event windowEvent;
   SDL_Window* window;
   SDL_Renderer* renderer;
-   
-  bool SpawnObject(H_Sphere);
-  bool DestroyObject(H_Sphere);
+  SDL_Event windowEvent;
+
+  std::vector<Object*>* ObjectList;
+  Engine_System();
+
+//System Variables
+  SDL_DisplayMode display_variables;
+
+  SDL_Point system_max_resolution;
+  SDL_Point current_resolution;
+
+  SDL_WindowFlags windowflags;
+  SDL_RendererFlags rendererflags;
+  
+public:
+
+
+  int main_loop();
+  int init();
+  
+  bool SetRendererFlags(int);
+  bool SetWindowFlags(int);
+
+  inline Object* SpawnCircle(Vector2D _pos, float _radius)
+  {
+    return _physics->CreateCircle(_pos, _radius);
+  }
+  inline Object* SpawnRectangle(Vector2D _pos, Vector2D _wh)
+  {
+    return _physics->CreateRect(_pos, _wh);
+  }
+  inline Object* SpawnPolygon(Vector2D _pos, b2Vec2* _points, size_t _size)
+  {
+    return _physics->CreatePolygon(_pos, _points, _size);
+  }
+  inline Object* SpawnEdge(Vector2D _pointA, Vector2D _pointB)
+  {
+    return _physics->CreateEdge(_pointA, _pointB);
+  }
+  
+  bool DestroyObject(Object*);
   
 
   Engine_System(uint32_t Resolution_X, uint32_t Resolution_Y);
