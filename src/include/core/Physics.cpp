@@ -3,7 +3,6 @@ inline void Physics::bodyDefInit()
 {
   dynamicbodydef.type = b2_dynamicBody;
   dynamicbodydef.position = b2Vec2_zero;
-
   staticbodydef.type = b2_staticBody;
   staticbodydef.position = b2Vec2_zero;
 
@@ -19,7 +18,6 @@ inline void Physics::fixtureDefInit()
 inline void Physics::circleShapeInit()
 {
   primitiveCircle.m_radius = 10;
-
 }
 
 inline void Physics::rectShapeInit()
@@ -38,9 +36,10 @@ Physics::Physics()
   //gravity.SetZero();
   world = new b2World(gravity);
 
-  SetTimeStep(1.0f/60.0f);
+  SetTimeStep(1.0f);
 
   world->SetContactListener(&ContactListenerInstance);
+  defaultMassData.mass = 1;
   bodyDefInit();
   circleShapeInit();
   rectShapeInit();
@@ -71,13 +70,13 @@ Object* Physics::CreateCircle(Vector2D _pos, float _rad)
   dynamicbodydef.position.Set(_pos.x, _pos.y);
   b2Body* newCircleBody = world->CreateBody(&dynamicbodydef);
 
+  newCircleBody->SetMassData(&defaultMassData);
 //Modify primitive shapes according to input
   primitiveCircle.m_radius = _rad;
-
 //Make fixture definition from default fixture
   b2FixtureDef newfixturedef;
   newfixturedef.friction = 0.3f;
-  newfixturedef.density = 1.0f;
+  newfixturedef.density = 1 / (PI * _rad * _rad);
 //Bind shape from fixture def to primitive shape
   newfixturedef.shape = &primitiveCircle;
 
@@ -97,9 +96,9 @@ Object* Physics::CreateRect(Vector2D _pos, Vector2D _wh)
   dynamicbodydef.position.Set(_pos.x, _pos.y);
   b2Body* newRectBody = world->CreateBody(&dynamicbodydef);
   dynamicbodydef.position.SetZero();
-  
 //Modify primitive shapes according to input
   primitiveRect.SetAsBox(_wh.x, _wh.y);
+  newRectBody->SetMassData(&defaultMassData);
 
 //Make fixture definition from default fixture
   b2FixtureDef newfixturedef;
@@ -193,7 +192,7 @@ Object *Physics::RemoveObject(Object *_obj)
 
 void Physics::SetTimeStep(float _timestep)
 {
-  ASSERT(timeStep >= 0, "Given timestep is less than zero %d", _timestep);
+  ASSERT(_timestep >= 0, "Given timestep is less than zero %f", _timestep);
   timeStep = _timestep;
 
 }

@@ -238,7 +238,7 @@ int main(int argv, char** args){
     //Draw Circles
     for(int i = 0; i < CircleArr.size(); i++){
       
-      cam.DrawCircleFilled(CircleArr[i].pos, CircleArr[i].rad, CircleArr[i].rgba);
+      cam.DrawCircleFilled(CircleArr[i].pos, CircleArr[i].rad, CircleArr[i].rgba, 0);
 
     }
     for(auto& p : PolyArr){
@@ -247,7 +247,7 @@ int main(int argv, char** args){
     SDL_Color color{0xff, 0xff, 0xff, SDL_ALPHA_OPAQUE};
     SDL_Color color2{0x11, 0x11, 0x11, 100}; 
     //Center Circle
-    cam.DrawCircleFilled(cam.GetCenter(), 10/scale,color);
+    cam.DrawCircleFilled(cam.GetCenter(), 10/scale,color, 0);
 
     //Midline 
     Vector2D p1 = {0, SCREEN_Y/2};

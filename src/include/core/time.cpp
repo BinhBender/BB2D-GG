@@ -1,6 +1,6 @@
 #include "time.h"
 
-float Time::deltaTime = 0;
+double Time::deltaTime = 0;
 Time* Time::instance = nullptr;
 Time::Time()
 {
@@ -14,7 +14,7 @@ void Time::start_time()
 
 void Time::end_time()
 {
-  std::chrono::duration<float> duration = std::chrono::high_resolution_clock::now() - start;
+  std::chrono::duration<double> duration = std::chrono::high_resolution_clock::now() - start;
 
   deltaTime = duration.count();
 }

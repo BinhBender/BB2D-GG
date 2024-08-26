@@ -17,7 +17,9 @@ Vector2D Normalize(const Vector2D& self);
 #define Vector2_Down Vector2D{0, -1}
 #define Vector2_One  Vector2D{1,  1}
 
-void Rotate(float);
+inline Vector2D Rotate(Vector2D& self, float rad){
+  return {(self.x * cos(rad)) - (self.y * sin(rad)), (self.x * sin(rad)) + (self.y*cos(rad))};
+}
 
 //Basic Arithmetics
 Vector2D operator+(const Vector2D &self, const Vector2D &other);

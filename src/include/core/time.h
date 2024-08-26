@@ -12,7 +12,7 @@ private:
   Time();
 
 public: 
-  static float deltaTime; //The delta of the start and end of the frame.
+  static double deltaTime; //The delta of the start and end of the frame.
 
   static Time* GetInstance();
   void start_time();  //When the frame starts

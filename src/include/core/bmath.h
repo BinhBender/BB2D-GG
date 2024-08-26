@@ -4,12 +4,14 @@
 #pragma once
 #include <math.h>
 
-#define PI 3.14159f
-
-//These definitions exist in case I'm ever too lazy 
+#define PI 3.141592653589792f
+ 
 #define RAD(x) x * PI / 180.0f
 #define DEG(x) x * 180.0f / PI
-#define LERP(A,B,T) A + (t * (B - A))
+
+#define COSRP(A,B,T) ((A-B)/2.0f) * cos(T * 2.0f * PI) + (A + B)/2.0f
+#define SINRP(A,B,T) 2 * ((A-B)/2.0f) * sin(T * 2.0f * PI) + (A + B)/2.0f
+#define LERP(A,B,T) A + ((B - A) * T)
 
 /// @brief Converts a degree value into a radian
 /// @param float Degree Value
@@ -21,16 +23,5 @@ inline float Radians(float);
 /// @return float Degree
 inline float Degree(float);
 
-/// @brief  Clamps a number so that it only exists between the bounds of a and b
-/// @param  a Lower limit of the clamp
-/// @param  b Upper limit of the clamp
-/// @param  source Input number to clamp
-/// @return The resulting clampage
-inline int B_Clamp(int a, int b, int source);
-
-/// @brief  Clamps a number so that it only exists between the bounds of a and b
-/// @param  a Lower limit of the clamp
-/// @param  b Upper limit of the clamp
-/// @param  source Input number to clamp
-/// @return The resulting clampage
-inline float B_Clamp(float a, float b, float source);
+float easeOutBounce(float x);
+float easeInOutBounce(float x);

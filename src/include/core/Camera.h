@@ -12,6 +12,8 @@
 #define CAMERA_FPS_60 60
 #define CAMERA_FPS_144 144
 #define CAMERA_FPS_UNLIMITED -1
+
+#define DEFAULT_CIRCLE_RESOLUTION 50
 #define ASSERT(_check, ...) if(!(_check)){ (void)fprintf(stderr, __VA_ARGS__); exit(1);}
 
 
@@ -47,16 +49,10 @@ public:
   void DrawForces(Object** list, size_t size);
   void DrawObjects(Object** list, size_t size);
 
-  /// @brief Draws a rasterized outline of a circle, slower than filled using world coordinates.
-  /// @param _position pointer to the object
-  /// @param _radius A pointer to the object
-  void DrawCircle(const Vector2D _position, const float _radius, const SDL_Color);
-//  void DrawCircles(Object** List, int count);
-
   /// @brief Draws a circle based on a preset circle texture using world coordinates.
   /// @param _position pointer to the object
   /// @param _radius A pointer to the object
-  void DrawCircleFilled(const Vector2D _position, const float _radius, const SDL_Color);
+  void DrawCircleFilled(const Vector2D _position, const float _radius, const SDL_Color, float _rotation);
 //  void DrawCirclesFilled(Object**, size_t size);
 
   /// @brief The center of the camera in world space
@@ -73,10 +69,11 @@ public:
   void DrawEdge(Vector2D _pointA, Vector2D _pointB, const SDL_Color);
 
 
-  /// @brief 
-  /// @param _pos 
-  /// @param wh 
-  void DrawRectangle(Vector2D _pos, Vector2D wh, const SDL_Color);
+  /// @brief Draws a rectangle given the width and height, cannot be rotated.
+  /// @param _pos Position of the rectangle
+  /// @param _wh Width and Height -> X and Y
+  /// @param _color An RGBA struct
+  void DrawRectangle(Vector2D _pos, Vector2D _wh, const SDL_Color _color);
 
   /// @brief Draws a polygon based on the given verticies using world coordinates. Only supports convex polygons.
   /// @param verticies Array of vertices 
@@ -88,7 +85,6 @@ public:
   void SetFPS(int);
 
   inline Vector2D ScreenSpaceToWorldSpace(Vector2D _screenPosition){
-
     Vector2D offset = GetCenter();
     return {
       ((_screenPosition.x - (RESOLUTION_X / 2)) / scale) + offset.x,

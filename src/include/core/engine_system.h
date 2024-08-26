@@ -76,7 +76,12 @@ public:
   {
     return _physics->CreateEdge(_pointA, _pointB);
   }
-  
+  inline Camera* GetCamera() const{
+    return this->_camera;
+  }
+  inline Physics* GetPhysics() const{
+    return _physics;
+  }
   bool DestroyObject(Object*);
   
 

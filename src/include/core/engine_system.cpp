@@ -6,7 +6,7 @@ Engine_System::Engine_System()
   SDL_GetWindowSizeInPixels(window, &system_max_resolution.x,&system_max_resolution.y);
   SDL_GetDesktopDisplayMode(0, &display_variables);
   SetWindowFlags(SDL_WindowFlags::SDL_WINDOW_ALLOW_HIGHDPI);
-  SetRendererFlags(SDL_RENDERER_ACCELERATED );
+  SetRendererFlags(SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   
 }
 Engine_System::Engine_System(uint32_t Resolution_X, uint32_t Resolution_Y) : Engine_System()
@@ -17,6 +17,8 @@ Engine_System::Engine_System(uint32_t Resolution_X, uint32_t Resolution_Y) : Eng
 }
 Engine_System::~Engine_System()
 {
+  SDL_DestroyWindow(window);
+  SDL_DestroyRenderer(renderer);
   delete _timeHandler;
   delete _inputHandler;
   delete _physics;
@@ -54,7 +56,6 @@ int Engine_System::main_loop(){
       return ES_STOP_RUNNING;
     }
   }
-
 
   _physics->Update_Object();
   //printf("ObjectList Size: %i\n", ObjectList->size());

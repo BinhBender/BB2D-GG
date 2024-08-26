@@ -21,6 +21,7 @@
 class Object{
 private:
   b2Fixture* fixture;
+  b2Body* body;
 public:
   Object();
   Object(b2Fixture*);
@@ -31,7 +32,7 @@ public:
   b2Shape* shape;
   b2Shape::Type type;
   
-
+//Unused
   SDL_Texture* texture;
   #pragma GCC diagnostic ignored "-Wnarrowing"
   #pragma GCC diagnostic ignored "-Woverflow"
@@ -57,30 +58,76 @@ union{
   virtual void OnCollisionEnd(b2Contact* _collision);
 
   void SetFixture(b2Fixture* _fixture);
-  b2Fixture* GetFixture()
-  {
-  return fixture;
-  }
+  b2Fixture* GetFixture() const;
+  
+  b2Body* GetBody() const;
 
   void SetTexture(SDL_Texture* _texture);
   SDL_Texture* GetTexture();
 
-  Vector2D GetPosition()
-  {
-  
-    b2Vec2 pos = fixture->GetBody()->GetPosition();
-    return Vector2D{pos.x, pos.y};
-  }
-  Vector2D GetForce()
-  {
-    b2Vec2 force = fixture->GetBody()->GetLinearVelocity();
-    return {force.x, force.y};
-  }
+  Vector2D GetPosition();
+  const b2Vec2& b2GetPosition();
+  Vector2D GetForce();
 
-  b2Shape::Type GetType() {return type;}
-  b2Shape* GetShape() {return shape;}
-  
+  float GetMass();
+  void SetPosition(Vector2D _pos);
+  b2Shape::Type GetType();
+  b2Shape* GetShape();
+
 
   friend class Physics;
 
 };
+
+
+typedef struct{
+
+  b2Vec2 position;
+  float angle;
+  SDL_Color     color;
+  
+  //b2BodyDef     bodydef;
+  //b2FixtureDef  fixturedef;
+  b2Shape*       shape;
+  //
+  SDL_Texture*  texture;
+  //b2MassData    massdatadef;
+}ObjectDef;
+
+
+inline b2Fixture* Object::GetFixture() const
+{
+  return fixture;
+}
+
+inline b2Body* Object::GetBody() const
+{
+  return fixture->GetBody();
+}
+
+inline Vector2D Object::GetPosition()
+{
+  b2Vec2 pos = body->GetPosition();
+  return Vector2D{pos.x, pos.y};
+}
+inline const b2Vec2& Object::b2GetPosition()
+{
+  return body->GetPosition();
+}
+
+inline Vector2D Object::GetForce()
+{
+  b2Vec2 force = body->GetLinearVelocity();
+  return {force.x, force.y};
+}
+
+inline float Object::GetMass(){
+  return body->GetMass();
+}
+
+inline void Object::SetPosition(Vector2D _pos){
+  fixture->GetBody()->SetTransform({_pos.x, _pos.y}, body->GetAngle());
+}
+
+inline b2Shape::Type Object::GetType()  {return type;}
+inline b2Shape*      Object::GetShape() {return shape;}

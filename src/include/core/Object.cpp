@@ -37,6 +37,7 @@ inline void Object::SetFixture(b2Fixture *_fixture)
   fixture->GetBody()->GetUserData().pointer = uintptr_t(this);
   type  = fixture->GetType();
   shape = fixture->GetShape();
+  body  = fixture->GetBody();
 }
 
 SDL_Texture *Object::GetTexture()

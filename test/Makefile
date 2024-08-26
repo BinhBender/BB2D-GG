@@ -50,3 +50,9 @@ engine:
 	test_enginesystem.cpp \
 	../src/include/core/*.cpp \
 	$(LIBS) 
+
+mm:
+	$(CXX) $(CXXFLAGS) $(DEST) \
+	test_MapManager.cpp \
+	../src/include/core/*.cpp \
+	$(LIBS) 

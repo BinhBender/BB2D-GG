@@ -26,6 +26,8 @@ private:
   b2BodyDef      dynamicbodydef;
   b2BodyDef      staticbodydef;
   b2FixtureDef   defaultFixtureDef;
+
+  b2MassData     defaultMassData;
   
   b2CircleShape  primitiveCircle;
   b2PolygonShape primitiveRect;
@@ -35,8 +37,8 @@ private:
   b2World* world;
   float timeStep;
 
-  const uint32_t velocityIterations = 6;
-  const uint32_t positionIteration = 2;
+  const uint32_t velocityIterations = 18;
+  const uint32_t positionIteration = 15;
   
   void bodyDefInit();
   void fixtureDefInit();

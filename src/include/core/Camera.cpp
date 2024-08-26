@@ -72,7 +72,7 @@ void Camera::init()
   
   //A higher diameter will result in a higher resolution
   //Position of rendered circle gets more inaccurate the lower the resolution
-  defaultCircleFilled = create_circle_texture(100);
+  defaultCircleFilled = create_circle_texture(DEFAULT_CIRCLE_RESOLUTION);
 }
 void Camera::render(Object **list, size_t size)
 {
@@ -105,10 +105,9 @@ void Camera::DrawObjects(Object **list, size_t size)
     switch(list[i]->type){
       case b2Shape::Type::e_circle:
         { 
-        //printf("drawing circle");
         //Recasting the shape pointer as an edge shape to access radius
         b2CircleShape* circle = static_cast<b2CircleShape*>(list[i]->GetShape());
-        DrawCircleFilled(circle->m_p + bodyPosition, circle->m_radius, list[i]->color);
+        DrawCircleFilled(circle->m_p + bodyPosition, circle->m_radius, list[i]->color, body->GetAngle());
       break;
         }
       case b2Shape::Type::e_edge:
@@ -129,81 +128,19 @@ void Camera::DrawObjects(Object **list, size_t size)
 
         for(int i = 0; i < count; i++){
           //Matching up the local coordinates with world space coordinates
-          vertices[i].position = WorldSpaceToScreenSpace(Vector2D{polygon->m_vertices[i].x, polygon->m_vertices[i].y} + bodyPosition) ;
+          Vector2D verts = Vector2D{polygon->m_vertices[i].x, polygon->m_vertices[i].y};
+          vertices[i].position = WorldSpaceToScreenSpace(Rotate(verts, body->GetAngle())+ bodyPosition);
+          vertices[i].color = list[i]->color;
 
         }
         DrawPolygon(vertices, count, list[i]->color);
       break;
         }
-
-      
     }
   }
 }
-/*
-void Camera::DrawCircles(Object **list, size_t size)
-{
-  for(int i = 0; i < size; i++){
-    SDL_SetRenderDrawColor(
-      renderer, 
-      list[i]->r,
-      list[i]->g, 
-      list[i]->b, 
-      list[i]->a
-    );
-    DrawCircle(
-      renderer,
-      objects[i]
-    );
 
-    
-  }
-}
-*/
-
-void Camera::DrawCircle(const Vector2D _position, const float _radius, const SDL_Color _color)
-{
-  int32_t centreX = _position.x;
-  int32_t centreY = _position.y; 
-  
-  const int32_t diameter = (_radius * 2);
-
-   int32_t x = (_radius - 1);
-   int32_t y = 0;
-   int32_t tx = 1;
-   int32_t ty = 1;
-   int32_t error = (tx - diameter);
-
-   while (x >= y)
-   {
-      //  Each of the following renders an octant of the circle
-      SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
-      SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
-      SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
-      SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
-      SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
-      SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
-      SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
-      SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
-
-      if (error <= 0)
-      {
-         ++y;
-         error += ty;
-         ty += 2;
-      }
-
-      if (error > 0)
-      {
-         --x;
-         tx += 2;
-         error += (tx - diameter);
-      }
-   }
-
-}
-
-void Camera::DrawCircleFilled(const Vector2D _position, const float _radius, const SDL_Color _color)
+void Camera::DrawCircleFilled(const Vector2D _position, const float _radius, const SDL_Color _color, float _rotation)
 {
 
   ASSERT(defaultCircleFilled != nullptr, "Drawing a filled circle without a texture set, please use init() before using the draw");
@@ -213,15 +150,14 @@ void Camera::DrawCircleFilled(const Vector2D _position, const float _radius, con
     _color.b
   );
   Vector2D newpos = WorldSpaceToScreenSpace({_position.x - _radius, _position.y + _radius});
-  SDL_Rect dst = {
+  SDL_FRect dst = {
     newpos.x, 
     newpos.y, 
     //Diameter
     _radius * 2 * scale, 
     _radius * 2 * scale
   };
-  
-  ASSERT(SDL_RenderCopy(renderer, defaultCircleFilled, NULL, &dst) == 0, "Draw Circle Error: %s", SDL_GetError());
+  ASSERT(SDL_RenderCopyExF(renderer, defaultCircleFilled, NULL, &dst, _rotation, NULL, SDL_RendererFlip::SDL_FLIP_NONE) == 0, "Draw Circle Error: %s", SDL_GetError());
 }
 
 
@@ -260,7 +196,6 @@ void Camera::DrawRectangle(Vector2D _pos, Vector2D wh, const SDL_Color _color)
     wh.x * scale,
     wh.y * scale
   };
-  //SDL_RenderDrawRect(renderer, &rect);
   SDL_RenderFillRect(renderer, &rect);
 }
 
